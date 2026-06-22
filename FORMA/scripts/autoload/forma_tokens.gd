@@ -4,7 +4,7 @@ const YELLOW := Color("#F0C93A")
 const BLUE := Color("#1B3FA0")
 const RED := Color("#CE3A2F")
 const GREEN := Color("#1A6B42")
-const AMBER := Color("#D97B20")
+const AMBER := Color("#A35A00")
 
 const N900 := Color("#0D0D15")
 const N700 := Color("#2F2E38")

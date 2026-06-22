@@ -300,6 +300,7 @@ theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
 theme_override_fonts/font = SubResource("FontVariation_3")
 theme_override_font_sizes/font_size = 10
 text = "Taxa livre de risco: 10.75% a.a. (Selic ref.) · Modelo sem correlação entre ativos."
+autowrap_mode = 2
 
 [node name="BottomActionsBar" type="PanelContainer" parent="." unique_id=911424202]
 layout_mode = 2

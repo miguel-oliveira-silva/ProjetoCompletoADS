@@ -21,10 +21,12 @@ bg_color = Color(0.925, 0.918, 0.902, 1)
 
 [node name="AssetAllocationRow" type="VBoxContainer" unique_id=1877274279]
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 script = ExtResource("1")
 
 [node name="RowMargin" type="MarginContainer" parent="." unique_id=1993752746]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 0
@@ -83,6 +85,7 @@ theme_override_colors/font_color = Color(0.102, 0.42, 0.259, 1)
 theme_override_fonts/font = SubResource("FontVariation_2")
 theme_override_font_sizes/font_size = 11
 text = "+0.0%"
+clip_text = true
 
 [node name="RiskLabel" type="Label" parent="RowMargin/RowHBox/DataVBox/StatsHBox" unique_id=790182942]
 unique_name_in_owner = true
@@ -91,6 +94,7 @@ theme_override_colors/font_color = Color(0.851, 0.482, 0.125, 1)
 theme_override_fonts/font = SubResource("FontVariation_2")
 theme_override_font_sizes/font_size = 11
 text = " ±0.0%"
+clip_text = true
 
 [node name="RowSeparator" type="Panel" parent="." unique_id=1106283417]
 custom_minimum_size = Vector2(0, 1)

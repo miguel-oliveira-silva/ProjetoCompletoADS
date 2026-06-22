@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://bbhmar6e4jb37" path="res://assets/fonts/SpaceMono-Regular.ttf" id="4"]
 [ext_resource type="Texture2D" uid="uid://omgw44yrr3yo" path="res://assets/icons/arrow_left.svg" id="5"]
 [ext_resource type="Texture2D" uid="uid://qniledqr3v1b" path="res://assets/icons/more_horiz.svg" id="6"]
+[ext_resource type="Texture2D" path="res://assets/icons/notifications.svg" id="7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 bg_color = Color(0.973, 0.965, 0.945, 1)
@@ -157,12 +158,7 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_12"]
-bg_color = Color(0.835, 0.831, 0.855, 1)
-corner_radius_top_left = 100
-corner_radius_top_right = 100
-corner_radius_bottom_right = 100
-corner_radius_bottom_left = 100
+
 
 [node name="WalletSelectionScreen" type="VBoxContainer" unique_id=86905245]
 anchors_preset = 15
@@ -212,6 +208,7 @@ text = "Montar Carteira"
 horizontal_alignment = 1
 
 [node name="MoreButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=571527133]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 size_flags_vertical = 4
@@ -223,28 +220,35 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-texture = ExtResource("6")
+texture = ExtResource("7")
 stretch_mode = 3
 
-[node name="SafeAreaMargin" type="MarginContainer" parent="." unique_id=4445250]
+
+[node name="MainScrollContainer" type="ScrollContainer" parent="." unique_id=111111111]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ScrollContent" type="MarginContainer" parent="MainScrollContainer" unique_id=222222222]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 24
 
-[node name="InnerContent" type="VBoxContainer" parent="SafeAreaMargin" unique_id=1674796980]
+[node name="InnerContent" type="VBoxContainer" parent="MainScrollContainer/ScrollContent" unique_id=1674796980]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 theme_override_constants/separation = 16
 
-[node name="HeaderSection" type="VBoxContainer" parent="SafeAreaMargin/InnerContent" unique_id=140988621]
+[node name="HeaderSection" type="VBoxContainer" parent="MainScrollContainer/ScrollContent/InnerContent" unique_id=140988621]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TitleLabel" type="Label" parent="SafeAreaMargin/InnerContent/HeaderSection" unique_id=1135626050]
+[node name="TitleLabel" type="Label" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection" unique_id=1135626050]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
 theme_override_fonts/font = SubResource("FontVariation_1")
@@ -252,29 +256,29 @@ theme_override_font_sizes/font_size = 30
 text = "Monte sua
 carteira"
 
-[node name="SubtitleLabel" type="Label" parent="SafeAreaMargin/InnerContent/HeaderSection" unique_id=958304129]
+[node name="SubtitleLabel" type="Label" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection" unique_id=958304129]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.384, 0.38, 0.447, 1)
 theme_override_fonts/font = SubResource("FontVariation_2")
 theme_override_font_sizes/font_size = 14
 text = "Selecione até 10 ativos para o seu portfólio."
 
-[node name="ProgressRow" type="HBoxContainer" parent="SafeAreaMargin/InnerContent/HeaderSection" unique_id=1845393377]
+[node name="ProgressRow" type="HBoxContainer" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection" unique_id=1845393377]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ProgressLabel" type="Label" parent="SafeAreaMargin/InnerContent/HeaderSection/ProgressRow" unique_id=2006636768]
+[node name="ProgressLabel" type="Label" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection/ProgressRow" unique_id=2006636768]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
 theme_override_fonts/font = SubResource("FontVariation_3")
 theme_override_font_sizes/font_size = 10
 text = "ATIVOS SELECIONADOS"
 
-[node name="ProgressSpacer" type="Control" parent="SafeAreaMargin/InnerContent/HeaderSection/ProgressRow" unique_id=1949861935]
+[node name="ProgressSpacer" type="Control" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection/ProgressRow" unique_id=1949861935]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SelectionCounterLabel" type="Label" parent="SafeAreaMargin/InnerContent/HeaderSection/ProgressRow" unique_id=1613139424]
+[node name="SelectionCounterLabel" type="Label" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection/ProgressRow" unique_id=1613139424]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
@@ -282,7 +286,7 @@ theme_override_fonts/font = SubResource("FontVariation_3")
 theme_override_font_sizes/font_size = 13
 text = "0  /  10"
 
-[node name="SelectionProgressBar" type="ProgressBar" parent="SafeAreaMargin/InnerContent/HeaderSection" unique_id=1659130378]
+[node name="SelectionProgressBar" type="ProgressBar" parent="MainScrollContainer/ScrollContent/InnerContent/HeaderSection" unique_id=1659130378]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 3)
 layout_mode = 2
@@ -292,28 +296,28 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_5")
 max_value = 10.0
 show_percentage = false
 
-[node name="SuggestedSection" type="VBoxContainer" parent="SafeAreaMargin/InnerContent" unique_id=1859442161]
+[node name="SuggestedSection" type="VBoxContainer" parent="MainScrollContainer/ScrollContent/InnerContent" unique_id=1859442161]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SuggestedSectionHeader" type="Label" parent="SafeAreaMargin/InnerContent/SuggestedSection" unique_id=1234593777]
+[node name="SuggestedSectionHeader" type="Label" parent="MainScrollContainer/ScrollContent/InnerContent/SuggestedSection" unique_id=1234593777]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
 theme_override_fonts/font = SubResource("FontVariation_3")
 theme_override_font_sizes/font_size = 9
 text = "CARTEIRAS SUGERIDAS"
 
-[node name="SuggestedScrollContainer" type="ScrollContainer" parent="SafeAreaMargin/InnerContent/SuggestedSection" unique_id=167913918]
+[node name="SuggestedScrollContainer" type="ScrollContainer" parent="MainScrollContainer/ScrollContent/InnerContent/SuggestedSection" unique_id=167913918]
 unique_name_in_owner = true
 layout_mode = 2
 vertical_scroll_mode = 0
 
-[node name="SuggestedPortfoliosRow" type="HBoxContainer" parent="SafeAreaMargin/InnerContent/SuggestedSection/SuggestedScrollContainer" unique_id=1824249668]
+[node name="SuggestedPortfoliosRow" type="HBoxContainer" parent="MainScrollContainer/ScrollContent/InnerContent/SuggestedSection/SuggestedScrollContainer" unique_id=1824249668]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="SearchLineEdit" type="LineEdit" parent="SafeAreaMargin/InnerContent" unique_id=1180082871]
+[node name="SearchLineEdit" type="LineEdit" parent="MainScrollContainer/ScrollContent/InnerContent" unique_id=1180082871]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
@@ -324,17 +328,13 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2")
 theme_override_styles/focus = SubResource("StyleBoxFlat_3")
 placeholder_text = "Buscar ativo (ex: PETR4)"
 
-[node name="AssetsScrollContainer" type="ScrollContainer" parent="SafeAreaMargin/InnerContent" unique_id=1822768917]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="AssetsListContainer" type="VBoxContainer" parent="SafeAreaMargin/InnerContent/AssetsScrollContainer" unique_id=830616947]
+[node name="AssetsListContainer" type="VBoxContainer" parent="MainScrollContainer/ScrollContent/InnerContent" unique_id=830616947]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 24
+
+
 
 [node name="BottomSelectionBar" type="PanelContainer" parent="." unique_id=369171784]
 unique_name_in_owner = true
@@ -349,9 +349,9 @@ theme_override_constants/separation = 0
 [node name="BottomMargin" type="MarginContainer" parent="BottomSelectionBar/BottomVBox" unique_id=1933956397]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_bottom = 16
 
 [node name="BottomHBox" type="HBoxContainer" parent="BottomSelectionBar/BottomVBox/BottomMargin" unique_id=2038198687]
 layout_mode = 2
@@ -428,12 +428,3 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_7")
 disabled = true
 text = "Continuar"
 
-[node name="HomeIndicator" type="CenterContainer" parent="BottomSelectionBar/BottomVBox" unique_id=1749055734]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HomeStrip" type="PanelContainer" parent="BottomSelectionBar/BottomVBox/HomeIndicator" unique_id=1289681422]
-custom_minimum_size = Vector2(120, 4)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_12")

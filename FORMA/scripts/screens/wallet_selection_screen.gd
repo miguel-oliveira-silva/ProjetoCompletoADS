@@ -1,18 +1,19 @@
 extends VBoxContainer
 
-@onready var safe_area_margin:   MarginContainer = %SafeAreaMargin
+@onready var scroll_content:     MarginContainer = %ScrollContent
+@onready var main_scroll:        ScrollContainer = %MainScrollContainer
 @onready var counter_label:      Label           = %SelectionCounterLabel
 @onready var selection_progress: ProgressBar     = %SelectionProgressBar
 @onready var suggested_row:      HBoxContainer   = %SuggestedPortfoliosRow
 @onready var suggested_scroll:   ScrollContainer = %SuggestedScrollContainer
 @onready var search_edit:        LineEdit        = %SearchLineEdit
-@onready var assets_scroll:      ScrollContainer = %AssetsScrollContainer
 @onready var assets_list:        VBoxContainer   = %AssetsListContainer
 @onready var bottom_bar:         PanelContainer  = %BottomSelectionBar
 @onready var bottom_count_label: Label           = %BottomCountLabel
 @onready var bottom_progress:    ProgressBar     = %BottomProgressBar
 @onready var clear_button:       Button          = %ClearSelectionButton
 @onready var continue_button:    Button          = %ContinueButton
+@onready var more_button:        Button          = %MoreButton
 
 const CATEGORY_SECTION_SCENE := preload("res://scenes/components/category_section.tscn")
 const SUGGESTED_CHIP_SCENE   := preload("res://scenes/components/suggested_portfolio_chip.tscn")
@@ -22,7 +23,7 @@ const BREAKPOINT_DESKTOP := 900
 const INERTIA_FRICTION   := 7.0
 
 var _category_sections: Dictionary = {}
-var _touch_in_assets_scroll: bool  = false
+var _touch_in_scroll: bool         = false
 var _last_drag_velocity: float     = 0.0
 var _scroll_inertia: float         = 0.0
 var _loading_label: Label
@@ -32,19 +33,22 @@ var _fill_amber: StyleBoxFlat
 var _fill_green: StyleBoxFlat
 
 func _ready() -> void:
+	# Garante que o VBoxContainer raiz preenche toda a viewport
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	size = get_viewport_rect().size
 
 	_fill_blue  = _make_fill(FormaTokens.BLUE)
 	_fill_amber = _make_fill(FormaTokens.AMBER)
 	_fill_green = _make_fill(FormaTokens.GREEN)
 
-	get_tree().root.size_changed.connect(_update_responsive_layout)
+	get_tree().root.size_changed.connect(_on_viewport_resized)
 
 	search_edit.text_changed.connect(_on_search_changed)
 	SelectionManager.selection_changed.connect(_on_selection_changed)
 	SelectionManager.selection_limit_reached.connect(_on_limit_reached)
 	clear_button.pressed.connect(SelectionManager.clear)
 	continue_button.pressed.connect(_on_continue_pressed)
+	more_button.pressed.connect(_on_notifications_pressed)
 
 	await _load_categories()
 	_load_suggested_portfolios()
@@ -55,6 +59,11 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_update_responsive_layout()
 	_hide_all_scrollbars()
+
+func _on_viewport_resized() -> void:
+	size = get_viewport_rect().size
+	_update_responsive_layout()
+
 
 # Carregamento (async)
 
@@ -211,7 +220,7 @@ func _set_loading(is_loading: bool) -> void:
 # Scrollbars
 
 func _hide_all_scrollbars() -> void:
-	_hide_scrollbar_pair(assets_scroll)
+	_hide_scrollbar_pair(main_scroll)
 	_hide_scrollbar_pair(suggested_scroll)
 
 func _hide_scrollbar_pair(container: ScrollContainer) -> void:
@@ -223,28 +232,28 @@ func _hide_scrollbar(bar: ScrollBar) -> void:
 	bar.modulate            = Color(1.0, 1.0, 1.0, 0.0)
 	bar.mouse_filter        = Control.MOUSE_FILTER_IGNORE
 
-# Inércia de rolagem
+# Inércia de rolagem (opera sobre o scroll principal da tela inteira)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			_touch_in_assets_scroll = assets_scroll.get_global_rect().has_point(event.position)
-			if _touch_in_assets_scroll:
+			_touch_in_scroll = main_scroll.get_global_rect().has_point(event.position)
+			if _touch_in_scroll:
 				_scroll_inertia     = 0.0
 				_last_drag_velocity = 0.0
 		else:
-			if _touch_in_assets_scroll:
+			if _touch_in_scroll:
 				_scroll_inertia = _last_drag_velocity
-			_touch_in_assets_scroll = false
-	elif event is InputEventScreenDrag and _touch_in_assets_scroll:
+			_touch_in_scroll = false
+	elif event is InputEventScreenDrag and _touch_in_scroll:
 		_last_drag_velocity = -event.velocity.y
 
 func _process(delta: float) -> void:
-	if _touch_in_assets_scroll or abs(_scroll_inertia) <= 1.0:
-		if not _touch_in_assets_scroll:
+	if _touch_in_scroll or abs(_scroll_inertia) <= 1.0:
+		if not _touch_in_scroll:
 			_scroll_inertia = 0.0
 		return
-	assets_scroll.scroll_vertical += int(_scroll_inertia * delta)
+	main_scroll.scroll_vertical += int(_scroll_inertia * delta)
 	_scroll_inertia = lerpf(_scroll_inertia, 0.0, INERTIA_FRICTION * delta)
 
 # Busca e seleção
@@ -282,8 +291,13 @@ func _on_selection_changed(_selected: Array, count: int) -> void:
 func _on_limit_reached() -> void:
 	push_warning("Limite de 10 ativos atingido.")
 
+func _on_notifications_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/screens/notifications_screen.tscn")
+
 func _update_responsive_layout() -> void:
-	var w := get_tree().root.size.x
+	var w := get_viewport_rect().size.x
+	if w <= 0:
+		w = get_tree().root.size.x
 	if w <= 0:
 		return
 
@@ -300,8 +314,8 @@ func _update_responsive_layout() -> void:
 	for section: CategorySection in _category_sections.values():
 		section.set_columns(columns)
 
-	safe_area_margin.add_theme_constant_override("margin_left",  margin)
-	safe_area_margin.add_theme_constant_override("margin_right", margin)
+	scroll_content.add_theme_constant_override("margin_left",  margin)
+	scroll_content.add_theme_constant_override("margin_right", margin)
 	assets_list.queue_sort()
 
 func _make_fill(color: Color) -> StyleBoxFlat:

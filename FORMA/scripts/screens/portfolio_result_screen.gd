@@ -22,12 +22,16 @@ const BREAKPOINT_DESKTOP := 900
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	size = get_viewport_rect().size
 
-	get_tree().root.size_changed.connect(_update_responsive_layout)
+	get_tree().root.size_changed.connect(_on_viewport_resized)
 
 	back_button.pressed.connect(_go_to_selection)
 	new_portfolio_button.pressed.connect(_go_to_selection)
 	done_button.pressed.connect(_go_to_selection)
+
+	# Garante que o scroll não expande horizontalmente
+	main_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 
 	_populate(AppSession.latest_portfolio)
 
@@ -36,6 +40,11 @@ func _ready() -> void:
 	_update_responsive_layout()
 	_hide_scrollbar(main_scroll.get_v_scroll_bar())
 	_hide_scrollbar(main_scroll.get_h_scroll_bar())
+
+func _on_viewport_resized() -> void:
+	size = get_viewport_rect().size
+	_update_responsive_layout()
+
 
 func _hide_scrollbar(bar: ScrollBar) -> void:
 	bar.custom_minimum_size = Vector2.ZERO
@@ -103,17 +112,23 @@ func _go_to_selection() -> void:
 # Responsividade
 
 func _update_responsive_layout() -> void:
-	var w := get_tree().root.size.x
+	var w := get_viewport_rect().size.x
+	if w <= 0:
+		w = get_tree().root.size.x
 	if w <= 0:
 		return
 
 	var margin := 20
 	if w >= BREAKPOINT_DESKTOP:
 		margin = 64
+		metrics_grid.columns = 3
 	elif w >= BREAKPOINT_TABLET:
 		margin = 32
+		metrics_grid.columns = 3
+	else:
+		margin = 20
+		metrics_grid.columns = 3
 
-	metrics_grid.columns = 3
 	safe_area_margin.add_theme_constant_override("margin_left",  margin)
 	safe_area_margin.add_theme_constant_override("margin_right", margin)
 

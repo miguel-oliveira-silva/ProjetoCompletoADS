@@ -45,7 +45,9 @@ content_margin_bottom = 3.0
 
 [node name="CategorySection" type="VBoxContainer"]
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 script = ExtResource("1")
+
 
 [node name="HeaderButton" type="Button" parent="."]
 unique_name_in_owner = true
@@ -126,4 +128,4 @@ layout_mode = 2
 size_flags_horizontal = 3
 columns = 1
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/v_separation = 0
