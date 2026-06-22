@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://cwqaja8qwfdc1"]
+
+[ext_resource type="Script" uid="uid://cbhdu0hah2654" path="res://scripts/components/asset_allocation_row.gd" id="1"]
+[ext_resource type="FontFile" uid="uid://bjd5qot7yh5wo" path="res://assets/fonts/SpaceMono-Bold.ttf" id="2"]
+[ext_resource type="FontFile" uid="uid://bbhmar6e4jb37" path="res://assets/fonts/SpaceMono-Regular.ttf" id="3"]
+
+[sub_resource type="FontVariation" id="FontVariation_1"]
+base_font = ExtResource("2")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.925, 0.918, 0.902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2"]
+bg_color = Color(0.106, 0.247, 0.627, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_2"]
+base_font = ExtResource("3")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3"]
+bg_color = Color(0.925, 0.918, 0.902, 1)
+
+[node name="AssetAllocationRow" type="VBoxContainer" unique_id=1877274279]
+size_flags_horizontal = 3
+script = ExtResource("1")
+
+[node name="RowMargin" type="MarginContainer" parent="." unique_id=1993752746]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 14
+
+[node name="RowHBox" type="HBoxContainer" parent="RowMargin" unique_id=1722575143]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="TickerLabel" type="Label" parent="RowMargin/RowHBox" unique_id=10284219]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_fonts/font = SubResource("FontVariation_1")
+theme_override_font_sizes/font_size = 15
+text = "TICK"
+
+[node name="DataVBox" type="VBoxContainer" parent="RowMargin/RowHBox" unique_id=896195107]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="AllocationBar" type="ProgressBar" parent="RowMargin/RowHBox/DataVBox" unique_id=482009072]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2")
+max_value = 1.0
+value = 0.3
+show_percentage = false
+
+[node name="StatsHBox" type="HBoxContainer" parent="RowMargin/RowHBox/DataVBox" unique_id=1258149891]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="WeightLabel" type="Label" parent="RowMargin/RowHBox/DataVBox/StatsHBox" unique_id=1184612896]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.106, 0.247, 0.627, 1)
+theme_override_fonts/font = SubResource("FontVariation_1")
+theme_override_font_sizes/font_size = 14
+text = "30.0%"
+
+[node name="StatsSpacer" type="Control" parent="RowMargin/RowHBox/DataVBox/StatsHBox" unique_id=400934373]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ReturnLabel" type="Label" parent="RowMargin/RowHBox/DataVBox/StatsHBox" unique_id=1283597216]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.102, 0.42, 0.259, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 11
+text = "+0.0%"
+
+[node name="RiskLabel" type="Label" parent="RowMargin/RowHBox/DataVBox/StatsHBox" unique_id=790182942]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.851, 0.482, 0.125, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 11
+text = " ±0.0%"
+
+[node name="RowSeparator" type="Panel" parent="." unique_id=1106283417]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_3")
