@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b0sheblebiby"]
 
-[ext_resource type="Script" uid="uid://f7h2s9x8m1a3" path="res://scripts/screens/login_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/screens/login_screen.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 bg_color = Color(0.972549, 0.9647059, 0.94509804, 1)

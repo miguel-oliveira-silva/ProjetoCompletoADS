@@ -106,9 +106,14 @@ func _request(url: String, method: int = HTTPClient.METHOD_GET, body: String = "
 		data = JSON.parse_string(raw_body)
 
 	var ok: bool = status >= 200 and status < 300
+
+    var mensagem_erro: String = ""
+	if not ok:
+		mensagem_erro = raw_body.strip_edges()
+
 	return {
 		"ok": ok,
 		"code": status,
 		"data": data,
-		"error": ok ? "" : raw_body.strip_edges()
+		"error": mensagem_erro
 	}
