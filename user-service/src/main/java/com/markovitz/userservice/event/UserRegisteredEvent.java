@@ -4,65 +4,19 @@ import com.markovitz.userservice.entity.User;
 import java.time.LocalDateTime;
 
 /**
- * ============================================================================
- * EVENT — Objeto de Evento para Comunicação Assíncrona via RabbitMQ
- * ============================================================================
- *
- * O que é um Evento?
- * ─────────────────────────────────────────────────────────────────────────
- * Um evento representa algo que ACONTECEU no sistema — um fato no passado.
- * O nome sempre é no particípio passado: "UserRegistered" (Usuário Registrado).
- *
- * Eventos vs. Comandos na mensageria:
- *   - EVENTO: "Usuário foi registrado" → notifica quem estiver interessado
- *   - COMANDO: "Envie um email" → instrução direta para um receptor
- *
- * COMUNICAÇÃO ASSÍNCRONA:
- * ─────────────────────────────────────────────────────────────────────────
- *
- * Quando o user-service publica este evento no RabbitMQ:
- *   1. O user-service NÃO espera resposta — continua seu trabalho
- *   2. O RabbitMQ armazena o evento na fila
- *   3. O notification-service consome o evento quando estiver disponível
- *   4. Se o notification-service estiver offline, o evento fica na fila
- *      e será processado quando ele voltar  ESILIÊNCIA
- *
- * Comparação com chamada síncrona (REST):
- *   - REST:       user-service → [aguarda] → notification-service
- *   - RabbitMQ:   user-service → [segue em frente] → notification-service (processa depois)
- *
- * SERIALIZAÇÃO:
- * ─────────────────────────────────────────────────────────────────────────
- * O Jackson2JsonMessageConverter (configurado em RabbitMQConfig) converte
- * este objeto Java em JSON para publicar na fila, e converte de volta em
- * Java ao consumir. Por isso:
- *   - Todos os campos precisam ser públicos (via getters) ou ter @JsonProperty
- *   - A classe precisa ter construtor vazio para desserialização
- *
- * EXEMPLO DO JSON publicado na fila:
- * {
- *   "userId": 1,
- *   "userName": "João Silva",
- *   "userEmail": "joao@email.com",
- *   "riskProfile": "MODERADO",
- *   "occurredAt": "2024-01-15T14:30:00"
- * }
- *
- * ============================================================================
+ * Evento publicado quando um usuário se registra.
+ * 
+ * Esse objeto é convertido pra JSON e enviado pro RabbitMQ.
+ * O notification-service consome esse evento e cria uma notificação.
+ * 
+ * Obs: precisa ter construtor vazio e getters/setters pro Jackson
+ * conseguir serializar/desserializar.
  */
 public class UserRegisteredEvent {
 
-    /**
-     * ID do usuário recém-cadastrado.
-     * O notification-service usa este ID para saber para qual usuário
-     * enviar a notificação.
-     */
     private Long userId;
-
-    /** Nome do usuário — para personalizar a mensagem de boas-vindas */
     private String userName;
-
-    /** Email do usuário */
+    private String userEmail;
     private String userEmail;
 
     /** Perfil de risco — o notification-service pode incluir dicas na boas-vindas */

@@ -7,17 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ============================================================================
- * CONFIGURAÇÃO DO SWAGGER / OPENAPI
- * ============================================================================
- *
- * O Springdoc gera a documentação automaticamente lendo os controllers.
- * Esta classe apenas personaliza as informações exibidas na UI.
- *
- * Acesse a UI em: http://localhost:8081/swagger-ui.html
- * Acesse o JSON em: http://localhost:8081/v3/api-docs
- *
- * ============================================================================
+ * Configuração do Swagger para documentação automática da API.
+ * 
+ * O Springdoc lê os controllers e gera a doc automaticamente,
+ * aqui só personalizamos o título e descrição que aparece no Swagger UI.
+ * 
+ * Para acessar: http://localhost:8081/swagger-ui.html
  */
 @Configuration
 public class OpenApiConfig {

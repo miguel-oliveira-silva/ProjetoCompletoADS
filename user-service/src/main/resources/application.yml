@@ -1,11 +1,7 @@
-# =========================================================================
-# APPLICATION.YML — user-service (produção / Docker / PostgreSQL)
-# =========================================================================
-# Todos os valores sensíveis ou que mudam por ambiente vêm de variáveis
-# de ambiente (definidas no docker-compose.yml). Os valores depois de ":"
-# são apenas defaults usados se a variável de ambiente não existir —
-# úteis para rodar localmente fora do Docker durante o desenvolvimento.
-# =========================================================================
+# Configuração do user-service para produção com Docker
+# 
+# Os valores vêm de variáveis de ambiente definidas no docker-compose.yml
+# Os valores após ":" são defaults para rodar localmente
 
 spring:
 
