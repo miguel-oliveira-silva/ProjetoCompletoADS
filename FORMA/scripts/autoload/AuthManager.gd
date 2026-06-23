@@ -110,5 +110,5 @@ func _request(url: String, method: int = HTTPClient.METHOD_GET, body: String = "
 		"ok": ok,
 		"code": status,
 		"data": data,
-		"error": ok ? "" : raw_body.strip_edges()
+		"error": "" if ok else raw_body.strip_edges()
 	}
