@@ -46,7 +46,7 @@ variable "ssh_public_key_path" {
 variable "git_repo_url" {
   description = "URL do repositório Git contendo o projeto (com docker-compose.yml na raiz)."
   type        = string
-  default     = "https://github.com/miguel-oliveira-silva/Deploy.git"
+  default     = "https://github.com/miguel-oliveira-silva/ProjetoCompletoADS.git"
 }
 
 variable "git_repo_branch" {
