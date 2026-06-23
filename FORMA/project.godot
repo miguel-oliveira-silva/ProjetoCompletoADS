@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+AuthManager="res://scripts/autoload/AuthManager.gd"
 FormaTokens="*uid://cvvvql2niykwn"
 WalletApiClient="*uid://dpj1rjrj3ykid"
 AppSession="*uid://cc6kytvuaulx1"
