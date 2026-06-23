@@ -18,7 +18,10 @@ extends ScrollContainer
 @onready var name_edit:         LineEdit      = %NameEdit
 @onready var reg_email_edit:    LineEdit      = %RegEmailEdit
 @onready var reg_password_edit: LineEdit      = %RegPasswordEdit
-@onready var risk_option:       OptionButton  = %RiskOption
+@onready var conservador_btn:   Button        = %ConservadorButton
+@onready var moderado_btn:      Button        = %ModeradoButton
+@onready var agressivo_btn:     Button        = %AgressivoButton
+@onready var risk_desc_label:   Label         = %RiskDescLabel
 @onready var register_btn:      Button        = %RegisterBtn
 
 # ── Referência ao card para responsividade ─────────────────────────────────
@@ -26,6 +29,7 @@ extends ScrollContainer
 
 var _email_regex: RegEx
 var _active_tab:  String = "login"
+var _selected_risk: String = "MODERADO"
 
 # ===========================================================================
 func _ready() -> void:
@@ -40,6 +44,11 @@ func _ready() -> void:
 	# Envio com Enter
 	password_edit.text_submitted.connect(func(_t): _on_login_pressed())
 	reg_password_edit.text_submitted.connect(func(_t): _on_register_pressed())
+
+	conservador_btn.pressed.connect(func(): _select_risk("CONSERVADOR"))
+	moderado_btn.pressed.connect(func(): _select_risk("MODERADO"))
+	agressivo_btn.pressed.connect(func(): _select_risk("AGRESSIVO"))
+	_select_risk("MODERADO")
 
 	_switch_tab("login")
 	_apply_responsive()
@@ -117,8 +126,7 @@ func _on_register_pressed() -> void:
 	var email     := reg_email_edit.text.strip_edges()
 	var password  := reg_password_edit.text
 
-	var risk_map: Array[String] = ["CONSERVADOR", "MODERADO", "AGRESSIVO"]
-	var risk: String = risk_map[risk_option.selected]
+	var risk: String = _selected_risk
 
 	if name_val.length() < 2:
 		_show_error("Nome deve ter pelo menos 2 caracteres.")
@@ -182,3 +190,66 @@ func _clear_error() -> void:
 func _set_loading(btn: Button, loading: bool, label: String) -> void:
 	btn.disabled = loading
 	btn.text     = label
+
+func _select_risk(profile: String) -> void:
+	_selected_risk = profile
+	
+	# Atualiza a descrição
+	match profile:
+		"CONSERVADOR":
+			risk_desc_label.text = "Preservação de capital. Preferência por renda fixa, FIIs e ativos defensivos com menor volatilidade."
+		"AGRESSIVO":
+			risk_desc_label.text = "Alta tolerância ao risco visando maiores retornos. Foco em ativos de alta volatilidade."
+		_:
+			risk_desc_label.text = "Equilíbrio entre risco e retorno. Mix de renda variável e renda fixa para diversificação eficiente."
+
+	# Atualiza o visual dos botões
+	_style_risk_button(conservador_btn, profile == "CONSERVADOR", FormaTokens.GREEN)
+	_style_risk_button(moderado_btn,    profile == "MODERADO",    FormaTokens.BLUE)
+	_style_risk_button(agressivo_btn,   profile == "AGRESSIVO",   FormaTokens.RED)
+
+func _style_risk_button(btn: Button, active: bool, color: Color) -> void:
+	if active:
+		var s := StyleBoxFlat.new()
+		s.bg_color = color
+		s.corner_radius_top_left = 4
+		s.corner_radius_top_right = 4
+		s.corner_radius_bottom_right = 4
+		s.corner_radius_bottom_left = 4
+		s.content_margin_left = 12
+		s.content_margin_right = 12
+		btn.add_theme_stylebox_override("normal",  s)
+		btn.add_theme_stylebox_override("hover",   s)
+		btn.add_theme_stylebox_override("pressed", s)
+		btn.add_theme_color_override("font_color",         FormaTokens.N50)
+		btn.add_theme_color_override("font_hover_color",   FormaTokens.N50)
+		btn.add_theme_color_override("font_pressed_color", FormaTokens.N50)
+	else:
+		var s := StyleBoxFlat.new()
+		s.draw_center = false
+		s.border_color = FormaTokens.N200
+		s.border_width_left = 1
+		s.border_width_top = 1
+		s.border_width_right = 1
+		s.border_width_bottom = 1
+		s.corner_radius_top_left = 4
+		s.corner_radius_top_right = 4
+		s.corner_radius_bottom_right = 4
+		s.corner_radius_bottom_left = 4
+		s.content_margin_left = 12
+		s.content_margin_right = 12
+		btn.add_theme_stylebox_override("normal", s)
+		
+		var sh := StyleBoxFlat.new()
+		sh.bg_color = FormaTokens.N100
+		sh.corner_radius_top_left = 4
+		sh.corner_radius_top_right = 4
+		sh.corner_radius_bottom_right = 4
+		sh.corner_radius_bottom_left = 4
+		sh.content_margin_left = 12
+		sh.content_margin_right = 12
+		btn.add_theme_stylebox_override("hover",   sh)
+		btn.add_theme_stylebox_override("pressed", sh)
+		btn.add_theme_color_override("font_color",         FormaTokens.N700)
+		btn.add_theme_color_override("font_hover_color",   FormaTokens.N900)
+		btn.add_theme_color_override("font_pressed_color", FormaTokens.N900)

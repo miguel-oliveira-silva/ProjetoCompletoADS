@@ -13,20 +13,35 @@ func setup(notification: Dictionary) -> void:
 	var message: String = str(notification.get("message", ""))
 	var created_at: String = str(notification.get("createdAt", ""))
 	
-	# Ícone e cor por tipo
+	# Ícone e cor do badge por tipo
+	var badge_color: Color
 	match notification_type:
 		"BOAS_VINDAS":
 			icon_label.text = "🎉"
 			type_badge.text = "Boas-vindas"
-			type_badge.add_theme_color_override("font_color", FormaTokens.BLUE)
+			badge_color = FormaTokens.BLUE
 		"CARTEIRA_OTIMIZADA":
 			icon_label.text = "✅"
 			type_badge.text = "Carteira"
-			type_badge.add_theme_color_override("font_color", FormaTokens.GREEN)
+			badge_color = FormaTokens.GREEN
 		_:
 			icon_label.text = "📬"
 			type_badge.text = "Notificação"
-			type_badge.add_theme_color_override("font_color", FormaTokens.N500)
+			badge_color = FormaTokens.N500
+	
+	var badge_style := StyleBoxFlat.new()
+	badge_style.bg_color = badge_color
+	badge_style.content_margin_left = 8.0
+	badge_style.content_margin_right = 8.0
+	badge_style.content_margin_top = 3.0
+	badge_style.content_margin_bottom = 3.0
+	badge_style.corner_radius_top_left = 4
+	badge_style.corner_radius_top_right = 4
+	badge_style.corner_radius_bottom_right = 4
+	badge_style.corner_radius_bottom_left = 4
+	
+	type_badge.add_theme_stylebox_override("normal", badge_style)
+	type_badge.add_theme_color_override("font_color", FormaTokens.N50)
 	
 	title_label.text = title
 	message_label.text = message

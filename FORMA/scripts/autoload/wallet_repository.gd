@@ -69,7 +69,93 @@ func get_categories() -> Array:
 	return CATEGORIES.duplicate(true)
 
 func get_suggested_portfolios() -> Array:
-	return _suggested_portfolios.duplicate(true)
+	var risk := AppSession.user_risk
+	var portfolios := []
+	
+	match risk:
+		"CONSERVADOR":
+			portfolios = [
+				{
+					"id":        "carteira_dividendos",
+					"nome":      "Carteira\nDividendos",
+					"tag":       "Conservadora · Renda",
+					"variante":  "dark",
+					"descricao": "FIIs, seguradoras e renda fixa para geração de renda com segurança.",
+					"tickers":   ["CDB-LIQ-DIARIA", "TESOURO-SELIC-2029", "BBSE3", "PSSA3", "HGLG11", "KNRI11", "MXRF11"]
+				},
+				{
+					"id":        "carteira_crescimento",
+					"nome":      "Carteira\nPreservação",
+					"tag":       "Segurança · Liquidez",
+					"variante":  "blue",
+					"descricao": "Foco em títulos públicos indexados e alta liquidez diária.",
+					"tickers":   ["TESOURO-SELIC-2029", "CDB-LIQ-DIARIA", "TESOURO-IPCA-2035", "HGLG11", "KNRI11", "ITSA4"]
+				},
+				{
+					"id":        "carteira_internacional",
+					"nome":      "Carteira\nGlobal Defensiva",
+					"tag":       "Global · Estabilidade",
+					"variante":  "amber",
+					"descricao": "Diversificação global em dólar por meio de BDRs líderes e renda fixa.",
+					"tickers":   ["IVVB11", "AAPL34", "MSFT34", "GOGL34", "TESOURO-SELIC-2029"]
+				}
+			]
+		"AGRESSIVO":
+			portfolios = [
+				{
+					"id":        "carteira_dividendos",
+					"nome":      "Carteira\nDividendos",
+					"tag":       "Agressiva · Renda",
+					"variante":  "dark",
+					"descricao": "Bancos e ações pagadoras com maior volatilidade, buscando retornos robustos.",
+					"tickers":   ["BBAS3", "BPAC11", "SANB11", "ITSA4", "WEGE3", "PSSA3"]
+				},
+				{
+					"id":        "carteira_crescimento",
+					"nome":      "Carteira\nCrescimento",
+					"tag":       "Arrojada · Small Caps",
+					"variante":  "blue",
+					"descricao": "Empresas com alto potencial de valorização, small caps e tecnologia.",
+					"tickers":   ["WEGE3", "RENT3", "RAIL3", "MGLU3", "SOMA3", "NVDC34", "TSLA34"]
+				},
+				{
+					"id":        "carteira_internacional",
+					"nome":      "Carteira\nGlobal Tech",
+					"tag":       "Global · Alta Volatilidade",
+					"variante":  "amber",
+					"descricao": "Alta exposição a BDRs de inteligência artificial, tecnologia e ETFs de crescimento.",
+					"tickers":   ["IVVB11", "SMAL11", "AAPL34", "MSFT34", "NVDC34", "AMZO34", "TSLA34"]
+				}
+			]
+		_: # MODERADO
+			portfolios = [
+				{
+					"id":        "carteira_dividendos",
+					"nome":      "Carteira\nDividendos",
+					"tag":       "Renda · Dividendos",
+					"variante":  "dark",
+					"descricao": "Bancos, seguradoras e FIIs com histórico sólido de proventos.",
+					"tickers":   ["BBAS3", "BBSE3", "ITSA4", "HGLG11", "KNRI11", "PSSA3", "MXRF11"]
+				},
+				{
+					"id":        "carteira_crescimento",
+					"nome":      "Carteira\nCrescimento",
+					"tag":       "Equilibrada · Tech",
+					"variante":  "blue",
+					"descricao": "Empresas líderes em inovação no Brasil e nos EUA.",
+					"tickers":   ["WEGE3", "RENT3", "RAIL3", "AAPL34", "MSFT34", "NVDC34", "AMZO34"]
+				},
+				{
+					"id":        "carteira_internacional",
+					"nome":      "Carteira\nInternacional",
+					"tag":       "Global · Dólar",
+					"variante":  "amber",
+					"descricao": "BDRs de líderes globais e ETF S&P 500 para diversificação cambial.",
+					"tickers":   ["IVVB11", "AAPL34", "MSFT34", "GOGL34", "AMZO34", "NVDC34", "TSLA34"]
+				}
+			]
+
+	return portfolios.duplicate(true)
 
 # Expõe o cache para que a tela filtre os presets contra o que a API tem.
 # Sempre chamado APÓS get_available_assets() — cache estará populado.

@@ -1,18 +1,19 @@
 extends VBoxContainer
 
-@onready var safe_area_margin:   MarginContainer = %ScrollContent
-@onready var counter_label:      Label           = %SelectionCounterLabel
-@onready var selection_progress: ProgressBar     = %SelectionProgressBar
-@onready var suggested_row:      HBoxContainer   = %SuggestedPortfoliosRow
-@onready var suggested_scroll:   ScrollContainer = %SuggestedScrollContainer
-@onready var search_edit:        LineEdit        = %SearchLineEdit
-@onready var assets_scroll:      ScrollContainer = %MainScrollContainer
-@onready var assets_list:        VBoxContainer   = %AssetsListContainer
-@onready var bottom_bar:         PanelContainer  = %BottomSelectionBar
-@onready var bottom_count_label: Label           = %BottomCountLabel
-@onready var bottom_progress:    ProgressBar     = %BottomProgressBar
-@onready var clear_button:       Button          = %ClearSelectionButton
-@onready var continue_button:    Button          = %ContinueButton
+@onready var safe_area_margin:   MarginContainer    = %ScrollContent
+@onready var counter_label:      Label              = %SelectionCounterLabel
+@onready var selection_progress: ProgressBar        = %SelectionProgressBar
+@onready var suggested_row:      HBoxContainer      = %SuggestedPortfoliosRow
+@onready var suggested_scroll:   ScrollContainer    = %SuggestedScrollContainer
+@onready var search_edit:        LineEdit           = %SearchLineEdit
+@onready var assets_scroll:      ScrollContainer    = %MainScrollContainer
+@onready var assets_list:        VBoxContainer      = %AssetsListContainer
+@onready var bottom_bar:         PanelContainer     = %BottomSelectionBar
+@onready var bottom_count_label: Label              = %BottomCountLabel
+@onready var bottom_progress:    ProgressBar        = %BottomProgressBar
+@onready var clear_button:       Button             = %ClearSelectionButton
+@onready var continue_button:    Button             = %ContinueButton
+@onready var back_button:        Button             = %BackButton
 
 const CATEGORY_SECTION_SCENE := preload("res://scenes/components/category_section.tscn")
 const SUGGESTED_CHIP_SCENE   := preload("res://scenes/components/suggested_portfolio_chip.tscn")
@@ -48,8 +49,12 @@ func _ready() -> void:
 	continue_button.pressed.connect(_on_continue_pressed)
 
 	# TopAppBar
+	back_button.pressed.connect(_show_logout_dialog)
 	%ProfileButton.pressed.connect(_go_to_profile)
 	%MoreButton.pressed.connect(_go_to_notifications)
+
+	# top app bar setup is completed below
+
 
 	await _load_categories()
 	if not is_inside_tree():
@@ -74,6 +79,25 @@ func _go_to_profile() -> void:
 
 func _go_to_notifications() -> void:
 	_navigate_to("res://scenes/screens/notifications_screen.tscn")
+
+# ---------------------------------------------------------------------------
+# LOGOUT
+# ---------------------------------------------------------------------------
+func _show_logout_dialog() -> void:
+	FormaDialog.show_confirm(
+		self,
+		"Sair da conta",
+		"Deseja realmente sair? Voce precisara fazer login novamente.",
+		_on_logout_confirmed,
+		"Sair",
+		"Continuar"
+	)
+
+func _on_logout_confirmed() -> void:
+	SelectionManager.clear()
+	AuthManager.clear_token()
+	AppSession.clear()
+	_navigate_to("res://scenes/screens/login_screen.tscn")
 
 # Carregamento 
 
@@ -213,13 +237,7 @@ func _set_continue_loading(loading: bool) -> void:
 	continue_button.text     = "Otimizando..." if loading else "Continuar"
 
 func _show_error(msg: String) -> void:
-	var dialog := AcceptDialog.new()
-	dialog.title       = "Erro"
-	dialog.dialog_text = msg
-	add_child(dialog)
-	dialog.popup_centered()
-	dialog.confirmed.connect(dialog.queue_free)
-	dialog.canceled.connect(dialog.queue_free)
+	FormaDialog.show_error(self, msg)
 
 # Responsividade
 
