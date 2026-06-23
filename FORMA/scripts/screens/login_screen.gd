@@ -29,7 +29,7 @@ func _on_login_button_pressed() -> void:
 	login_button.text = "Conectando..."
 
 	# Aguardar resposta do servidor
-	var result: Dictionary = await AuthManager.login(email, password)
+    var result = await AuthManager.login(email, password)
 
 	# Reativar o botão independentemente do resultado
 	_reset_login_button()
