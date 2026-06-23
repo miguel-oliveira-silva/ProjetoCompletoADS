@@ -19,38 +19,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * ============================================================================
- * ASSET SERVICE — Lógica de Negócio e Cálculos Financeiros
- * ============================================================================
- *
- * Este é o serviço mais matematicamente rico do sistema.
- * Além do CRUD de ativos e preços, implementa os cálculos estatísticos
- * que são os INPUTS do algoritmo de Markowitz no portfolio-service.
- *
- * CÁLCULOS IMPLEMENTADOS:
- * ─────────────────────────────────────────────────────────────────────────
- *
- *   1. Retornos diários: rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
- *   2. Retorno médio:    μ  = Σrₜ / n
- *   3. Variância:        σ² = Σ(rₜ - μ)² / (n-1)
- *   4. Volatilidade:     σ  = √σ²
- *   5. Anualização:      σ_anual = σ_diária × √252
- *
- * Veja os comentários inline para explicação passo a passo.
- *
- * ============================================================================
- */
+// Service com lógica de negócio e cálculos financeiros (retorno médio μ e volatilidade σ)
 @Service
 public class AssetService {
 
     private static final Logger log = LoggerFactory.getLogger(AssetService.class);
-
-    /**
-     * Número de dias de pregão em um ano na B3 (Bolsa brasileira).
-     * Usado para anualizar as métricas diárias.
-     * Ex: volatilidade_anual = volatilidade_diaria × √252
-     */
+    
+    // Dias de pregão por ano na B3 (usado para anualizar métricas)
     private static final int TRADING_DAYS_PER_YEAR = 252;
 
     private final AssetRepository assetRepository;
@@ -65,27 +40,12 @@ public class AssetService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // =========================================================================
-    // OPERAÇÕES DE ATIVO (CRUD)
-    // =========================================================================
-
-    /**
-     * Cadastra um novo ativo financeiro no sistema.
-     *
-     * O ticker é convertido para MAIÚSCULAS antes de salvar.
-     * Ex: "petr4" → "PETR4"
-     *
-     * @param requestDTO dados do ativo
-     * @return dados do ativo criado com quantidade de preços (0 inicialmente)
-     */
+    // Cadastra novo ativo (ticker normalizado para MAIÚSCULAS)
     @Transactional
     public AssetResponseDTO createAsset(AssetRequestDTO requestDTO) {
-        // Normaliza o ticker: sempre maiúsculo e sem espaços
         String ticker = requestDTO.getTicker().toUpperCase().trim();
-
         log.info("Cadastrando novo ativo: {}", ticker);
 
-        // Verifica duplicata
         if (assetRepository.existsByTicker(ticker)) {
             throw new TickerAlreadyExistsException(
                     "O ativo com ticker '" + ticker + "' já está cadastrado");
@@ -103,9 +63,7 @@ public class AssetService {
         return AssetResponseDTO.from(saved, 0);
     }
 
-    /**
-     * Busca um ativo pelo ticker e retorna com contagem de preços.
-     */
+    // Busca ativo por ticker
     @Transactional(readOnly = true)
     public AssetResponseDTO findByTicker(String ticker) {
         Asset asset = getAssetByTicker(ticker.toUpperCase());
@@ -113,9 +71,7 @@ public class AssetService {
         return AssetResponseDTO.from(asset, count);
     }
 
-    /**
-     * Lista todos os ativos cadastrados.
-     */
+    // Lista todos os ativos
     @Transactional(readOnly = true)
     public List<AssetResponseDTO> findAll() {
         return assetRepository.findAll()
@@ -127,23 +83,7 @@ public class AssetService {
                 .toList();
     }
 
-    // =========================================================================
-    // OPERAÇÕES DE PREÇO
-    // =========================================================================
-
-    /**
-     * Adiciona um preço histórico a um ativo e publica evento no RabbitMQ.
-     *
-     * FLUXO:
-     * 1. Valida que o ativo existe
-     * 2. Cria e salva o AssetPrice
-     * 3. Publica evento assíncrono "asset.price.updated"
-     * 4. Retorna confirmação
-     *
-     * @param ticker     ticker do ativo (ex: "PETR4")
-     * @param requestDTO preço e data
-     * @return DTO de resposta do ativo atualizado
-     */
+    // Adiciona preço histórico e publica evento no RabbitMQ
     @Transactional
     public AssetResponseDTO addPrice(String ticker, PriceRequestDTO requestDTO) {
         String normalizedTicker = ticker.toUpperCase();
@@ -152,7 +92,6 @@ public class AssetService {
         log.info("Adicionando preço {} para {} em {}",
                 requestDTO.getPrice(), normalizedTicker, requestDTO.getPriceDate());
 
-        // Cria a entidade AssetPrice vinculada ao ativo
         AssetPrice price = AssetPrice.builder()
                 .asset(asset)
                 .price(requestDTO.getPrice())
@@ -164,38 +103,18 @@ public class AssetService {
         long totalPrices = assetPriceRepository.countByAsset(asset);
         log.info("Preço salvo. Total de preços para {}: {}", normalizedTicker, totalPrices);
 
-        // Publica evento assíncrono no RabbitMQ
         publishPriceUpdatedEvent(asset, requestDTO.getPrice(), requestDTO.getPriceDate());
 
         return AssetResponseDTO.from(asset, totalPrices);
     }
 
-    // =========================================================================
-    // CÁLCULO DE ESTATÍSTICAS — A PARTE MATEMÁTICA DO MARKOWITZ
-    // =========================================================================
-
-    /**
-     * Calcula as estatísticas financeiras de um ativo.
-     *
-     * Este método é o núcleo matemático do asset-service.
-     * Ele calcula μ e σ — as duas métricas fundamentais de Markowitz.
-     *
-     * REQUISITO MÍNIMO:
-     * Para calcular estatísticas significativas, precisamos de pelo menos
-     * 2 preços (para ter pelo menos 1 retorno).
-     * Em produção, exigiríamos 30+ pontos para confiabilidade estatística.
-     *
-     * @param ticker ticker do ativo
-     * @return estatísticas com retorno médio, volatilidade e valores anualizados
-     */
+    // Calcula estatísticas: retorno médio (μ) e volatilidade (σ) - inputs do algoritmo de Markowitz
     @Transactional(readOnly = true)
     public AssetStatsDTO calculateStats(String ticker) {
         Asset asset = getAssetByTicker(ticker.toUpperCase());
 
-        // Busca preços em ORDEM CRONOLÓGICA CRESCENTE (essencial para calcular retornos)
         List<AssetPrice> prices = assetPriceRepository.findByAssetOrderByPriceDateAsc(asset);
 
-        // Validação: precisamos de pelo menos 2 preços para calcular 1 retorno
         if (prices.size() < 2) {
             throw new IllegalArgumentException(
                     "O ativo '" + ticker + "' precisa de pelo menos 2 preços históricos " +
@@ -205,37 +124,16 @@ public class AssetService {
 
         log.info("Calculando estatísticas para {} com {} preços", ticker, prices.size());
 
-        // =====================================================================
-        // PASSO 1: Calcular os retornos diários
-        // =====================================================================
-        // Um retorno diário = quanto o preço mudou percentualmente de um dia para o próximo
-        // rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
-
+        // Passo 1: Calcular retornos diários rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
         double[] returns = calculateDailyReturns(prices);
-        // returns agora tem (N-1) elementos para N preços
-        // Ex: 5 preços → 4 retornos
 
-        // =====================================================================
-        // PASSO 2: Calcular o Retorno Médio (μ)
-        // =====================================================================
+        // Passo 2: Calcular retorno médio μ = Σrₜ / n
         double meanReturn = calculateMean(returns);
 
-        // =====================================================================
-        // PASSO 3: Calcular a Volatilidade (σ = desvio padrão)
-        // =====================================================================
+        // Passo 3: Calcular volatilidade σ = √(Σ(rₜ - μ)² / (n-1))
         double volatility = calculateStandardDeviation(returns, meanReturn);
 
-        // =====================================================================
-        // PASSO 4: Anualizar as métricas
-        // =====================================================================
-        // Convertemos de base diária para base anual para comparação intuitiva
-        //
-        // Retorno anual: simplesmente multiplica por 252 (dias de pregão)
-        //   μ_anual = μ_diário × 252
-        //
-        // Volatilidade anual: multiplica pela raiz quadrada de 252
-        //   σ_anual = σ_diário × √252
-        //   (porque a variância é aditiva, a raiz quadrada cancela)
+        // Passo 4: Anualizar métricas (retorno × 252, volatilidade × √252)
         double annualizedReturn     = meanReturn * TRADING_DAYS_PER_YEAR;
         double annualizedVolatility = volatility * Math.sqrt(TRADING_DAYS_PER_YEAR);
 
@@ -257,36 +155,14 @@ public class AssetService {
         );
     }
 
-    // =========================================================================
-    // MÉTODOS PRIVADOS — Cálculos matemáticos
-    // =========================================================================
-
-    /**
-     * Calcula os retornos diários a partir de uma lista de preços ordenados.
-     *
-     * FÓRMULA: rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
-     *
-     * Exemplo:
-     *   Preços:  [36.50, 37.20, 36.80, 37.90]
-     *   Retornos: [+1.92%, -1.08%, +2.99%]
-     *
-     * @param prices lista de AssetPrice em ordem CRONOLÓGICA
-     * @return array de retornos diários (tamanho = preços - 1)
-     */
+    // Calcula retornos diários: rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
     private double[] calculateDailyReturns(List<AssetPrice> prices) {
-        // O array de retornos tem 1 elemento a menos que o array de preços
-        // (não existe retorno para o primeiro dia, pois não há dia anterior)
         double[] returns = new double[prices.size() - 1];
 
         for (int i = 1; i < prices.size(); i++) {
-            // Preço atual (Pₜ)
             BigDecimal currentPrice = prices.get(i).getPrice();
-
-            // Preço anterior (Pₜ₋₁)
             BigDecimal previousPrice = prices.get(i - 1).getPrice();
 
-            // Retorno: rₜ = (Pₜ - Pₜ₋₁) / Pₜ₋₁
-            // Convertemos BigDecimal → double para fazer a aritmética
             double current  = currentPrice.doubleValue();
             double previous = previousPrice.doubleValue();
 
@@ -296,89 +172,37 @@ public class AssetService {
         return returns;
     }
 
-    /**
-     * Calcula a média aritmética de um array de valores.
-     *
-     * FÓRMULA: μ = (r₁ + r₂ + ... + rₙ) / n
-     *
-     * @param values array de valores
-     * @return média aritmética
-     */
+    // Calcula média: μ = Σrₜ / n
     private double calculateMean(double[] values) {
         double sum = 0.0;
-
-        // Soma todos os valores
         for (double value : values) {
             sum += value;
         }
-
-        // Divide pelo número de valores para obter a média
         return sum / values.length;
     }
 
-    /**
-     * Calcula o desvio padrão amostral de um array de retornos.
-     *
-     * FÓRMULA:
-     *   Variância amostral: σ² = Σ(rₜ - μ)² / (n - 1)
-     *   Desvio padrão:      σ  = √σ²
-     *
-     * POR QUE (n-1) E NÃO n?
-     * ─────────────────────────────────────────────────────────────────────
-     * Quando calculamos estatísticas de uma AMOSTRA (não da população toda),
-     * dividir por (n-1) ao invés de n corrige um viés estatístico.
-     * Isso é chamado de "Correção de Bessel".
-     *
-     * Intuição: com n=1, não podemos calcular variabilidade (não há comparação).
-     * Com (n-1), quando n=1, teríamos divisão por zero — indicando que
-     * precisamos de mais dados. Correto!
-     *
-     * Em finanças, sempre usamos desvio padrão AMOSTRAL pois trabalhamos
-     * com uma amostra do histórico, não com o histórico completo do ativo.
-     *
-     * @param returns  array de retornos diários
-     * @param mean     média já calculada (para evitar recalcular)
-     * @return desvio padrão amostral
-     */
+    // Calcula desvio padrão amostral: σ = √(Σ(rₜ - μ)² / (n-1))
+    // Usa (n-1) para correção de Bessel (amostra, não população)
     private double calculateStandardDeviation(double[] returns, double mean) {
         double sumSquaredDeviations = 0.0;
 
         for (double r : returns) {
-            // Desvio de cada retorno em relação à média: (rₜ - μ)
             double deviation = r - mean;
-
-            // Eleva ao quadrado: (rₜ - μ)²
-            // Por que quadrado? Porque desvios positivos e negativos se cancelariam
-            // se simplesmente somássemos. O quadrado sempre é positivo.
             sumSquaredDeviations += deviation * deviation;
         }
 
-        // Variância amostral: divide por (n-1), não por n (Correção de Bessel)
         double variance = sumSquaredDeviations / (returns.length - 1);
-
-        // Desvio padrão = raiz quadrada da variância
-        // Retorna à mesma unidade dos retornos (de % ao quadrado → %)
         return Math.sqrt(variance);
     }
 
-    // =========================================================================
-    // MÉTODOS AUXILIARES
-    // =========================================================================
-
-    /**
-     * Busca um ativo pelo ticker ou lança exceção se não encontrar.
-     * Método auxiliar reutilizado em vários métodos do Service.
-     */
+    // Busca ativo por ticker ou lança exceção
     private Asset getAssetByTicker(String ticker) {
         return assetRepository.findByTicker(ticker)
                 .orElseThrow(() -> new AssetNotFoundException(
                         "Ativo com ticker '" + ticker + "' não encontrado"));
     }
 
-    /**
-     * Publica o evento de preço atualizado no RabbitMQ.
-     * "Fire and forget" — não espera confirmação do consumidor.
-     */
+    // Publica evento no RabbitMQ (fire-and-forget)
     private void publishPriceUpdatedEvent(Asset asset, BigDecimal price,
                                            java.time.LocalDate priceDate) {
         try {
@@ -400,7 +224,6 @@ public class AssetService {
                     asset.getTicker());
 
         } catch (Exception e) {
-            // Não deixa o cadastro do preço falhar por causa do RabbitMQ
             log.error("Falha ao publicar evento de preço para {}: {}",
                     asset.getTicker(), e.getMessage());
         }
