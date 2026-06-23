@@ -46,7 +46,7 @@ import java.util.List;
  *     "id": 1,
  *     "userId": 1,
  *     "type": "BOAS_VINDAS",
- *     "title": "🎉 Bem-vindo ao Markovitz, João!",
+ *     "title": "🎉 Bem-vindo ao FORMA, João!",
  *     "status": "ENVIADA",
  *     "createdAt": "2024-01-15T14:28:00"
  *   }

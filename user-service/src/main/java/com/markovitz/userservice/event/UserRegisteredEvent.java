@@ -5,19 +5,38 @@ import java.time.LocalDateTime;
 
 /**
  * Evento publicado quando um usuário se registra.
- * 
- * Esse objeto é convertido pra JSON e enviado pro RabbitMQ.
- * O notification-service consome esse evento e cria uma notificação.
- * 
- * Obs: precisa ter construtor vazio e getters/setters pro Jackson
- * conseguir serializar/desserializar.
+ * Consumido pelo notification-service via RabbitMQ.
  */
 public class UserRegisteredEvent {
 
     private Long userId;
     private String userName;
     private String userEmail;
-    private String userEmail;
+    private User.RiskProfile riskProfile;
+    private LocalDateTime occurredAt;
+
+    // Construtor vazio necessário para o Jackson
+    public UserRegisteredEvent() {}
+
+    public UserRegisteredEvent(Long userId, String userName, String userEmail,
+                               User.RiskProfile riskProfile, LocalDateTime occurredAt) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.riskProfile = riskProfile;
+        this.occurredAt = occurredAt;
+    }
+
+    // Factory method para criar a partir da entidade User
+    public static UserRegisteredEvent from(User user) {
+        return new UserRegisteredEvent(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRiskProfile(),
+                LocalDateTime.now()
+        );
+    }
 
     /** Perfil de risco — o notification-service pode incluir dicas na boas-vindas */
     private User.RiskProfile riskProfile;

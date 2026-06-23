@@ -4,12 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Classe principal do microsserviço user-service.
- *
- * @SpringBootApplication configura automaticamente:
- * - Component scan nos subpacotes
- * - Auto-configuração de beans (DataSource, RabbitMQ, etc)
- * - Servidor web embutido (Tomcat)
+ * Classe principal do User Service.
+ * Porta: 8081
  */
 @SpringBootApplication
 public class UserServiceApplication {

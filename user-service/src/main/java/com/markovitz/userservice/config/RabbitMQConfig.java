@@ -10,31 +10,23 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuração do RabbitMQ para mensageria assíncrona.
- * 
- * Aqui definimos:
- * - Exchange: onde as mensagens são publicadas
- * - Queue: onde as mensagens ficam armazenadas
- * - Binding: ligação entre exchange e queue usando routing key
- * - Conversor JSON: para serializar eventos como JSON
- * 
- * Fluxo: UserService publica → Exchange → Queue → notification-service consome
+ * Define o exchange, queues e bindings para comunicação entre microsserviços.
  */
 @Configuration
 public class RabbitMQConfig {
 
-    // Nomes centralizados para evitar erros de digitação
-
+    // Constantes para evitar typos nas routing keys
     public static final String EXCHANGE_NAME = "markovitz.exchange";
     public static final String USER_REGISTERED_QUEUE = "user.registered.queue";
     public static final String USER_REGISTERED_ROUTING_KEY = "user.registered";
 
-    // Exchange do tipo Topic - permite usar padrões nas routing keys
+    // Exchange do tipo Topic - permite wildcards nas routing keys (ex: user.*)
     @Bean
     public TopicExchange markovitzExchange() {
         return new TopicExchange(EXCHANGE_NAME, true, false);
     }
 
-    // Fila onde ficam os eventos de usuário registrado
+    // Fila durável para eventos de usuário registrado
     @Bean
     public Queue userRegisteredQueue() {
         return QueueBuilder
@@ -42,7 +34,7 @@ public class RabbitMQConfig {
                 .build();
     }
 
-    // Binding: liga o exchange à fila usando a routing key
+    // Liga o exchange à fila usando a routing key
     @Bean
     public Binding userRegisteredBinding(Queue userRegisteredQueue,
                                          TopicExchange markovitzExchange) {
@@ -52,7 +44,7 @@ public class RabbitMQConfig {
                 .with(USER_REGISTERED_ROUTING_KEY);
     }
 
-    // Conversor JSON para as mensagens (ao invés do binário padrão)
+    // Conversor JSON para serializar/desserializar eventos
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();

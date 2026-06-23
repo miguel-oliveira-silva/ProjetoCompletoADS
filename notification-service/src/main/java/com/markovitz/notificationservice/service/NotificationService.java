@@ -58,12 +58,12 @@ public class NotificationService {
 
         try {
             // Composição da mensagem de boas-vindas
-            String title = "🎉 Bem-vindo ao Markovitz, " + event.getUserName() + "!";
+            String title = "🎉 Bem-vindo ao FORMA, " + event.getUserName() + "!";
 
             String message = String.join("\n",
                     "Olá, " + event.getUserName() + "! Seu cadastro foi realizado com sucesso.",
                     "",
-                    "O sistema Markovitz usa a Teoria Moderna do Portfólio de Harry Markowitz",
+                    "O FORMA usa a Teoria Moderna do Portfólio de Harry Markowitz",
                     "para ajudá-lo a construir carteiras de investimento otimizadas.",
                     "",
                     "Próximos passos:",

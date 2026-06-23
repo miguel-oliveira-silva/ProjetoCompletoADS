@@ -17,7 +17,7 @@
     <artifactId>notification-service</artifactId>
     <version>1.0.0</version>
     <name>notification-service</name>
-    <description>Microsserviço de notificações — Sistema Markovitz</description>
+    <description>Microsserviço de notificações — FORMA</description>
 
     <properties>
         <java.version>17</java.version>

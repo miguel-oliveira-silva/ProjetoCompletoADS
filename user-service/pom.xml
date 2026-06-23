@@ -17,7 +17,7 @@
     <artifactId>user-service</artifactId>
     <version>1.0.0</version>
     <name>user-service</name>
-    <description>Microsserviço de gestão de usuários — Sistema Markovitz</description>
+    <description>Microsserviço de gestão de usuários — FORMA</description>
 
     <properties>
         <java.version>17</java.version>
@@ -56,13 +56,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!--
-            =================================================================
-            POSTGRESQL — Driver JDBC para o banco relacional em produção.
-            =================================================================
-            Substitui o H2 como banco principal. O H2 continua disponível
-            apenas no escopo de testes (veja abaixo).
-        -->
+        <!--POSTGRESQL Driver JDBC -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

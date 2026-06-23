@@ -25,7 +25,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Portfolio Service API")
                         .description(
-                                "Microsserviço de otimização de carteiras do Sistema Markovitz.\n\n" +
+                                "Microsserviço de otimização de carteiras.\n\n" +
                                 "Responsável por:\n" +
                                 "- Criação e gestão de carteiras de investimento\n" +
                                 "- Execução do algoritmo de Markowitz (Fronteira Eficiente)\n" +
@@ -35,8 +35,8 @@ public class OpenApiConfig {
                         )
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Equipe Markovitz")
-                                .email("markovitz@ads.edu.br")
+                                .name("Equipe FORMA")
+                                .email("migsos01120@gmail.com")
                         )
                 );
     }

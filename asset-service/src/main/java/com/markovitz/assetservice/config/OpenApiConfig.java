@@ -25,7 +25,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Asset Service API")
                         .description(
-                                "Microsserviço de gestão de ativos financeiros do Sistema Markovitz.\n\n" +
+                                "Microsserviço de gestão de ativos financeiros.\n\n" +
                                 "Responsável por:\n" +
                                 "- Cadastro de ativos (ações, FIIs, ETFs) por ticker\n" +
                                 "- Registro de histórico de preços de fechamento\n" +
@@ -34,8 +34,8 @@ public class OpenApiConfig {
                         )
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Equipe Markovitz")
-                                .email("markovitz@ads.edu.br")
+                                .name("Equipe FORMA")
+                                .email("migsos01120@gmail.com")
                         )
                 );
     }

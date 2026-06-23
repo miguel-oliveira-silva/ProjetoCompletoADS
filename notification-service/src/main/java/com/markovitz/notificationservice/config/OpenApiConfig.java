@@ -25,7 +25,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Notification Service API")
                         .description(
-                                "Microsserviço de notificações do Sistema Markovitz.\n\n" +
+                                "Microsserviço de notificações.\n\n" +
                                 "Responsável por:\n" +
                                 "- Consumir eventos assíncronos do RabbitMQ:\n" +
                                 "  - 'user.registered' → gera notificação de boas-vindas\n" +
@@ -34,8 +34,8 @@ public class OpenApiConfig {
                         )
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Equipe Markovitz")
-                                .email("markovitz@ads.edu.br")
+                                .name("Equipe FORMA")
+                                .email("migsos01120@gmail.com")
                         )
                 );
     }
