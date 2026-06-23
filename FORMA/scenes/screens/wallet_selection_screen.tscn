@@ -158,6 +158,34 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pb_normal"]
+draw_center = false
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pb_focus"]
+draw_center = false
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pb_hover"]
+bg_color = Color(0.929, 0.918, 0.902, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pb_pressed"]
+bg_color = Color(0.835, 0.831, 0.855, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="WalletSelectionScreen" type="VBoxContainer" unique_id=86905245]
 anchors_preset = 15
 anchor_right = 1.0
@@ -178,7 +206,7 @@ theme_override_constants/margin_bottom = 0
 
 [node name="AppBarHBox" type="HBoxContainer" parent="TopAppBar/TopBarMargin" unique_id=85886757]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 4
 theme_override_constants/separation = 0
 
 [node name="BackButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=800228039]
@@ -198,36 +226,35 @@ mouse_filter = 2
 texture = ExtResource("5")
 stretch_mode = 3
 
+[node name="LeftSpacer" type="Control" parent="TopAppBar/TopBarMargin/AppBarHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="ProfileButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=20688377]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 4
 flat = true
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_pb_normal")
+theme_override_styles/focus = SubResource("StyleBoxFlat_pb_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pb_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pb_pressed")
 
-[node name="ProfileHBox" type="HBoxContainer" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton" unique_id=1540810858]
-layout_mode = 0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
-theme_override_constants/separation = 6
-alignment = 1
-
-[node name="ProfileIcon" type="TextureRect" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton/ProfileHBox" unique_id=1544026846]
-custom_minimum_size = Vector2(18, 18)
+[node name="ProfileIcon" type="TextureRect" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton" unique_id=1544026846]
+custom_minimum_size = Vector2(24, 24)
+custom_maximum_size = Vector2(32, 32)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 2
 texture = ExtResource("8")
-stretch_mode = 3
+stretch_mode = 5
 
-[node name="ProfileNameLabel" type="Label" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton/ProfileHBox" unique_id=1597664172]
-unique_name_in_owner = true
+[node name="RightSpacer" type="Control" parent="TopAppBar/TopBarMargin/AppBarHBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
-theme_override_fonts/font = SubResource("FontVariation_1")
-theme_override_font_sizes/font_size = 14
-text = "Perfil"
+size_flags_horizontal = 3
 
 [node name="MoreButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=571527133]
 unique_name_in_owner = true

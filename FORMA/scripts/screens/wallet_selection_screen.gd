@@ -50,7 +50,6 @@ func _ready() -> void:
 	# TopAppBar
 	%ProfileButton.pressed.connect(_go_to_profile)
 	%MoreButton.pressed.connect(_go_to_notifications)
-	%ProfileNameLabel.text = AppSession.user_name
 
 	await _load_categories()
 	if not is_inside_tree():
