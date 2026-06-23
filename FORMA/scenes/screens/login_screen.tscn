@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://lv8e8j2c2v4k9"]
+
+[ext_resource type="Script" uid="uid://f7h2s9x8m1a3" path="res://scripts/screens/login_screen.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.972549, 0.9647059, 0.94509804, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+content_margin_left = 28.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+
+[node name="LoginScreen" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = null
+script = ExtResource("1")
+
+[node name="ContentPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(380, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="VBox" type="VBoxContainer" parent="ContentPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="ContentPanel/VBox"]
+custom_minimum_size = Vector2(0, 0)
+text = "Bem-vindo de volta"
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="DescriptionLabel" type="Label" parent="ContentPanel/VBox"]
+custom_minimum_size = Vector2(0, 0)
+text = "Acesse sua conta para continuar gerenciando seus investimentos."
+theme_override_colors/font_color = Color(0.4, 0.4, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="EmailLabel" type="Label" parent="ContentPanel/VBox"]
+text = "E-mail"
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+
+[node name="EmailLineEdit" type="LineEdit" parent="ContentPanel/VBox"]
+placeholder_text = "Digite seu e-mail"
+size_flags_horizontal = 3
+
+[node name="PasswordLabel" type="Label" parent="ContentPanel/VBox"]
+text = "Senha"
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+
+[node name="PasswordLineEdit" type="LineEdit" parent="ContentPanel/VBox"]
+placeholder_text = "Digite sua senha"
+secret = true
+size_flags_horizontal = 3
+
+[node name="ErrorLabel" type="Label" parent="ContentPanel/VBox"]
+text = ""
+visible = false
+theme_override_colors/font_color = Color(0.8117647, 0.22745098, 0.18431373, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="LoginButton" type="Button" parent="ContentPanel/VBox"]
+text = "Entrar"
+custom_minimum_size = Vector2(0, 50)
+size_flags_horizontal = 3
+
+[node name="SecondaryButtons" type="HBoxContainer" parent="ContentPanel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ForgotPasswordButton" type="Button" parent="ContentPanel/VBox/SecondaryButtons"]
+text = "Esqueci minha senha"
+flat = true
+size_flags_horizontal = 3
+
+[node name="CreateAccountButton" type="Button" parent="ContentPanel/VBox/SecondaryButtons"]
+text = "Criar Conta"
+flat = true
+size_flags_horizontal = 3
