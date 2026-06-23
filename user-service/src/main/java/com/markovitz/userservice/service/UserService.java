@@ -16,14 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Service com a lógica de negócio do usuário.
- * 
- * Responsável por:
- * - Validar regras de negócio
- * - Chamar o repository para persistir dados
- * - Publicar eventos no RabbitMQ
- */
+// Service com lógica de negócio: validações, persistência e eventos RabbitMQ
 @Service
 public class UserService {
 
@@ -39,14 +32,7 @@ public class UserService {
 
     // Métodos de negócio
 
-    /**
-     * Registra um novo usuário.
-     * 
-     * Passos:
-     * 1. Verifica se email já existe
-     * 2. Salva no banco
-     * 3. Publica evento no RabbitMQ
-     */
+    // Registra novo usuário: valida email único, salva no banco e publica evento
     @Transactional
     public UserResponseDTO register(RegisterRequestDTO requestDTO) {
 
@@ -77,9 +63,7 @@ public class UserService {
         return UserResponseDTO.from(savedUser);
     }
 
-    /**
-     * Busca um usuário pelo ID.
-     */
+    // Busca usuário por ID
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
 
@@ -94,9 +78,7 @@ public class UserService {
         return UserResponseDTO.from(user);
     }
 
-    /**
-     * Lista todos os usuários cadastrados.
-     */
+    // Lista todos os usuários
     @Transactional(readOnly = true)
     public List<UserResponseDTO> findAll() {
 
@@ -108,9 +90,7 @@ public class UserService {
                 .toList();
     }
 
-    /**
-     * Atualiza o perfil de risco de um usuário.
-     */
+    // Atualiza perfil de risco do usuário
     @Transactional
     public UserResponseDTO updateRiskProfile(Long id, User.RiskProfile riskProfile) {
 
@@ -129,10 +109,7 @@ public class UserService {
 
     // Métodos privados
 
-    /**
-     * Publica evento de usuário registrado no RabbitMQ.
-     * Se der erro, não deixa o cadastro falhar (fire and forget).
-     */
+    // Publica evento no RabbitMQ (fire-and-forget: erro não interrompe cadastro)
     private void publishUserRegisteredEvent(User user) {
         try {
             UserRegisteredEvent event = UserRegisteredEvent.from(user);

@@ -1,21 +1,5 @@
 #cloud-config
-# =============================================================================
-# cloud-init.yaml — Provisionamento automático da VM no primeiro boot
-# =============================================================================
-# O Azure injeta este arquivo na VM via "custom_data". O cloud-init é um
-# padrão de mercado (suportado pela maioria das imagens Linux) que executa
-# tarefas de configuração assim que a VM liga pela primeira vez — sem
-# precisarmos entrar manualmente via SSH para instalar nada.
-#
-# O QUE ESTE SCRIPT FAZ, EM ORDEM:
-#   1. Atualiza pacotes do sistema operacional (Ubuntu)
-#   2. Instala dependências (git, curl, etc.)
-#   3. Instala o Docker Engine + Docker Compose plugin
-#   4. Clona o repositório do projeto
-#   5. Gera o arquivo .env com as credenciais vindas do Terraform
-#   6. Sobe toda a stack com "docker compose up -d --build"
-#   7. Registra um log de execução em /var/log/markovitz-bootstrap.log
-# =============================================================================
+
 
 package_update: true
 package_upgrade: true
@@ -28,20 +12,20 @@ packages:
   - apt-transport-https
 
 write_files:
-  # ---------------------------------------------------------------------------
-  # Script principal de bootstrap — feito como write_files + runcmd para
-  # facilitar depuração: se algo falhar, dá pra rodar o script manualmente
-  # de novo via SSH (sudo bash /opt/markovitz/bootstrap.sh).
-  # ---------------------------------------------------------------------------
+  
+  
+  
+  
+  
   - path: /opt/markovitz/bootstrap.sh
     permissions: '0755'
     content: |
       __BOOTSTRAP_SCRIPT__
 
-  # ---------------------------------------------------------------------------
-  # Serviço systemd que roda o bootstrap no boot e também permite re-executar
-  # facilmente (ex: depois de um "systemctl restart markovitz-bootstrap").
-  # ---------------------------------------------------------------------------
+  
+  
+  
+  
   - path: /etc/systemd/system/markovitz-bootstrap.service
     permissions: '0644'
     content: |
