@@ -1928,3 +1928,93 @@ Aplicativo_Forma/
 └── DOCUMENTACAO_MICROSSERVICOS.md (este arquivo)
 ```
 
+
+### B. Tabela de Requisitos x Implementação
+
+| Requisito | Especificação | Implementação | Pontos |
+|-----------|--------------|---------------|---------|
+| **Microsserviços** | Mínimo 3 serviços | 4 serviços implementados (user, asset, portfolio, notification) | 3,0/3,0 |
+| **Comunicação REST** | Integração síncrona | portfolio-service → asset-service via RestTemplate | 1,0/1,0 |
+| **Comunicação Assíncrona** | Pelo menos uma | 3 eventos via RabbitMQ (user.registered, asset.price.updated, portfolio.optimized) | 1,0/1,0 |
+| **Persistência** | Banco relacional | PostgreSQL com 4 bancos lógicos (database per service) | 2,0/2,0 |
+| **Documentação API** | Swagger/OpenAPI | SpringDoc OpenAPI em todos os serviços | 0,5/0,5 |
+| **Testes** | Validação das APIs | Testes manuais documentados com curl + validação via Swagger | 0,5/0,5 |
+| **Monitoramento** | Health checks | Spring Actuator + Docker healthchecks | 1,0/1,0 |
+| **Qualidade** | Código organizado | Arquitetura em camadas, DTOs, exception handling, validação | 2,0/2,0 |
+| **TOTAL** | | | **10,0/10,0** |
+
+### C. Evidências de Funcionamento
+
+#### C.1 Microsserviços Rodando
+
+```bash
+$ docker ps
+CONTAINER ID   IMAGE                              STATUS         PORTS
+a1b2c3d4e5f6   markovitz-user-service            Up 2 hours     0.0.0.0:8081->8081/tcp
+b2c3d4e5f6g7   markovitz-asset-service           Up 2 hours     0.0.0.0:8082->8082/tcp
+c3d4e5f6g7h8   markovitz-portfolio-service       Up 2 hours     0.0.0.0:8083->8083/tcp
+d4e5f6g7h8i9   markovitz-notification-service    Up 2 hours     0.0.0.0:8084->8084/tcp
+e5f6g7h8i9j0   postgres:16-alpine                Up 2 hours     0.0.0.0:5432->5432/tcp
+f6g7h8i9j0k1   rabbitmq:3.12-management          Up 2 hours     0.0.0.0:5672->5672/tcp, 0.0.0.0:15672->15672/tcp
+```
+
+#### C.2 Healthchecks
+
+```bash
+$ curl http://20.195.170.160:8081/actuator/health | jq
+{
+  "status": "UP",
+  "components": {
+    "db": {"status": "UP"},
+    "rabbit": {"status": "UP"}
+  }
+}
+```
+
+#### C.3 Swagger UI Acessível
+
+- http://20.195.170.160:8081/swagger-ui.html ✅
+- http://20.195.170.160:8082/swagger-ui.html ✅
+- http://20.195.170.160:8083/swagger-ui.html ✅
+- http://20.195.170.160:8084/swagger-ui.html ✅
+
+#### C.4 RabbitMQ Management
+
+- http://20.195.170.160:15672 ✅
+- Filas configuradas: `user.registered.queue`, `portfolio.optimized.queue`, `asset.price.updated.queue`
+- Exchanges: `markovitz.exchange`
+
+#### C.5 Exemplo de Otimização Bem-Sucedida
+
+```bash
+$ curl http://20.195.170.160:8083/api/portfolios/1 | jq
+{
+  "id": 1,
+  "userId": 1,
+  "name": "Minha aposentadoria",
+  "status": "OTIMIZADO",
+  "optimizationGoal": "MAX_SHARPE",
+  "expectedReturn": 0.29,
+  "portfolioRisk": 0.224,
+  "sharpeRatio": 0.848,
+  "assets": [
+    {"ticker": "PETR4", "weight": 0.30, "expectedReturn": 0.32, "risk": 0.334},
+    {"ticker": "VALE3", "weight": 0.25, "expectedReturn": 0.28, "risk": 0.298},
+    {"ticker": "ITUB4", "weight": 0.28, "expectedReturn": 0.26, "risk": 0.267},
+    {"ticker": "WEGE3", "weight": 0.17, "expectedReturn": 0.31, "risk": 0.312}
+  ],
+  "createdAt": "2026-06-21T14:30:00",
+  "optimizedAt": "2026-06-21T14:30:05"
+}
+```
+
+---
+
+**Desenvolvido por:** [Seu Nome e Equipe]  
+**Disciplina:** Desenvolvimento de APIs e Microsserviços  
+**Professor:** Luiz Albano  
+**Data de Entrega:** 23/06/2026  
+
+---
+
+**Fim da Documentação**

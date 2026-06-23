@@ -9,166 +9,60 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ============================================================================
- * CONFIGURAÇÃO DO RABBITMQ
- * ============================================================================
- *
- * Esta classe configura toda a infraestrutura de mensageria do user-service.
- *
- * CONCEITOS FUNDAMENTAIS DO RABBITMQ:
- * ─────────────────────────────────────────────────────────────────────────
- *
- * 1. PRODUCER (Publicador)
- *    Quem envia mensagens. No user-service, o UserService publica eventos
- *    quando um usuário se cadastra.
- *
- * 2. EXCHANGE (Roteador)
- *    Recebe a mensagem do Producer e decide para qual(is) fila(s) enviá-la.
- *    Tipos de Exchange:
- *      - Direct:  roteia por routing key exata
- *      - Topic:   roteia por padrão (ex: "user.*" pega "user.registered")
- *      - Fanout:  envia para TODAS as filas vinculadas (broadcast)
- *      - Headers: roteia por atributos do cabeçalho
- *
- *    Usaremos TopicExchange para flexibilidade máxima.
- *
- * 3. QUEUE (Fila)
- *    Armazena as mensagens até que um consumidor as processe.
- *    As filas são persistentes — as mensagens não se perdem se o RabbitMQ reiniciar.
- *
- * 4. BINDING (Vínculo)
- *    Liga um Exchange a uma Queue usando uma routing key (chave de roteamento).
- *    Ex: mensagens com routing key "user.registered" vão para "user.registered.queue"
- *
- * 5. CONSUMER (Consumidor)
- *    Quem lê e processa as mensagens da fila.
- *    No nosso sistema, o notification-service consumirá "user.registered.queue".
- *
- * FLUXO COMPLETO:
- *   UserService → RabbitTemplate → Exchange → (routing key) → Queue → notification-service
- *
- * ============================================================================
- *
- * @Configuration → diz ao Spring que esta classe contém definições de beans
- * @Bean → diz ao Spring para gerenciar o objeto retornado pelo método
+ * Configuração do RabbitMQ para mensageria assíncrona.
+ * 
+ * Aqui definimos:
+ * - Exchange: onde as mensagens são publicadas
+ * - Queue: onde as mensagens ficam armazenadas
+ * - Binding: ligação entre exchange e queue usando routing key
+ * - Conversor JSON: para serializar eventos como JSON
+ * 
+ * Fluxo: UserService publica → Exchange → Queue → notification-service consome
  */
 @Configuration
 public class RabbitMQConfig {
 
-    // =========================================================================
-    // CONSTANTES — Nomes das filas, exchanges e routing keys
-    // =========================================================================
-    // Boas práticas: centralizar os nomes como constantes evita erros de digitação
-    // e facilita manutenção. Outros serviços usarão os mesmos nomes.
+    // Nomes centralizados para evitar erros de digitação
 
-    /** Nome do exchange principal do sistema Markovitz */
     public static final String EXCHANGE_NAME = "markovitz.exchange";
-
-    /** Nome da fila onde eventos de usuário registrado são armazenados */
     public static final String USER_REGISTERED_QUEUE = "user.registered.queue";
-
-    /**
-     * Routing key para o evento de usuário registrado.
-     * O "#" no final seria um wildcard em padrão topic, mas aqui usamos
-     * a chave exata para enviar ao notification-service.
-     */
     public static final String USER_REGISTERED_ROUTING_KEY = "user.registered";
 
-    // =========================================================================
-    // BEANS DE CONFIGURAÇÃO
-    // =========================================================================
-
-    /**
-     * Define o Exchange do tipo Topic.
-     *
-     * TopicExchange permite usar wildcards nas routing keys:
-     *   "*" = substitui exatamente UMA palavra
-     *   "#" = substitui zero ou mais palavras
-     *
-     * Ex: binding com "user.*" recebe tanto "user.registered" quanto "user.deleted"
-     *
-     * durable(true) = o exchange sobrevive a reinicializações do RabbitMQ
-     */
+    // Exchange do tipo Topic - permite usar padrões nas routing keys
     @Bean
     public TopicExchange markovitzExchange() {
         return new TopicExchange(EXCHANGE_NAME, true, false);
-        //                                         ↑      ↑
-        //                                     durable  autoDelete
-        // autoDelete=false = não apaga o exchange quando não há consumidores
     }
 
-    /**
-     * Define a fila que armazenará eventos de usuário registrado.
-     *
-     * QueueBuilder oferece uma API fluente para configurar filas.
-     * durable() = a fila sobrevive a reinicializações do RabbitMQ
-     *
-     * IMPORTANTE: Esta fila será consumida pelo notification-service,
-     * mas ela precisa existir antes de alguém tentar consumir.
-     * O Spring AMQP cria a fila automaticamente se ela não existir.
-     */
+    // Fila onde ficam os eventos de usuário registrado
     @Bean
     public Queue userRegisteredQueue() {
         return QueueBuilder
-                .durable(USER_REGISTERED_QUEUE)  // fila persistente com o nome definido
+                .durable(USER_REGISTERED_QUEUE)
                 .build();
     }
 
-    /**
-     * Cria o BINDING entre o Exchange e a Queue.
-     *
-     * Isso diz ao RabbitMQ:
-     * "Toda mensagem que chegar no exchange 'markovitz.exchange'
-     *  com a routing key 'user.registered'
-     *  deve ser colocada na fila 'user.registered.queue'"
-     *
-     * BindingBuilder oferece uma API fluente para criar bindings.
-     */
+    // Binding: liga o exchange à fila usando a routing key
     @Bean
     public Binding userRegisteredBinding(Queue userRegisteredQueue,
                                          TopicExchange markovitzExchange) {
         return BindingBuilder
-                .bind(userRegisteredQueue)          // queue de destino
-                .to(markovitzExchange)              // exchange de origem
-                .with(USER_REGISTERED_ROUTING_KEY); // routing key que ativa este binding
+                .bind(userRegisteredQueue)
+                .to(markovitzExchange)
+                .with(USER_REGISTERED_ROUTING_KEY);
     }
 
-    /**
-     * Configura o conversor de mensagens para usar JSON.
-     *
-     * Por padrão, o Spring AMQP serializa objetos Java em formato binário (Java Serialization).
-     * Isso é problemático porque:
-     *   1. Outros serviços em outras linguagens não conseguem ler
-     *   2. É mais difícil de debugar (não é legível por humanos)
-     *
-     * Jackson2JsonMessageConverter serializa/deserializa usando JSON — muito melhor!
-     * Agora você pode ver as mensagens no RabbitMQ Management UI em formato JSON legível.
-     */
+    // Conversor JSON para as mensagens (ao invés do binário padrão)
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    /**
-     * Configura o RabbitTemplate — a ferramenta principal para PUBLICAR mensagens.
-     *
-     * RabbitTemplate é o equivalente do RestTemplate, mas para mensageria.
-     * Ele fornece métodos como:
-     *   - convertAndSend(exchange, routingKey, objeto) → serializa e envia
-     *   - receiveAndConvert(queue) → recebe e deserializa
-     *
-     * Aqui configuramos para usar nosso conversor JSON ao invés do binário padrão.
-     *
-     * @param connectionFactory fornecido automaticamente pelo Spring Boot
-     *        com base nas configurações do application.yml (host, port, user, pass)
-     */
+    // Template para publicar mensagens no RabbitMQ
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-
-        // Usa o conversor JSON que definimos acima
         template.setMessageConverter(jsonMessageConverter());
-
         return template;
     }
 }

@@ -17,14 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Service - camada de lógica de negócio.
- *
- * Responsabilidades:
- * - Implementar regras de negócio
- * - Coordenar Repository e RabbitMQ
- * - Publicar eventos assíncronos
- *
- * Arquitetura: Controller -> Service -> Repository -> Banco
+ * Service com a lógica de negócio do usuário.
+ * 
+ * Responsável por:
+ * - Validar regras de negócio
+ * - Chamar o repository para persistir dados
+ * - Publicar eventos no RabbitMQ
  */
 @Service
 public class UserService {
@@ -42,20 +40,19 @@ public class UserService {
     // Métodos de negócio
 
     /**
-     * Registra um novo usuário no sistema.
-     *
-     * Fluxo:
-     * 1. Verifica se o email já está cadastrado
-     * 2. Salva no banco de dados
-     * 3. Publica evento "user.registered" no RabbitMQ
-     * 4. Retorna o DTO de resposta
+     * Registra um novo usuário.
+     * 
+     * Passos:
+     * 1. Verifica se email já existe
+     * 2. Salva no banco
+     * 3. Publica evento no RabbitMQ
      */
     @Transactional
     public UserResponseDTO register(RegisterRequestDTO requestDTO) {
 
         log.info("Iniciando cadastro de novo usuário com email: {}", requestDTO.getEmail());
 
-        // Verifica se email já existe
+        // Checa se email já foi usado
         if (userRepository.existsByEmail(requestDTO.getEmail())) {
             log.warn("Tentativa de cadastro com email já existente: {}", requestDTO.getEmail());
             throw new EmailAlreadyExistsException(
@@ -63,7 +60,7 @@ public class UserService {
             );
         }
 
-        // Constrói e salva a entidade
+        // Monta o objeto User e salva no banco
         User user = User.builder()
                 .name(requestDTO.getName())
                 .email(requestDTO.getEmail())
@@ -74,7 +71,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
         log.info("Usuário salvo com sucesso. ID gerado: {}", savedUser.getId());
 
-        // Publica evento no RabbitMQ
+        // Envia evento pro RabbitMQ
         publishUserRegisteredEvent(savedUser);
 
         return UserResponseDTO.from(savedUser);
@@ -133,8 +130,8 @@ public class UserService {
     // Métodos privados
 
     /**
-     * Publica o evento de usuário registrado no RabbitMQ.
-     * Comunicação assíncrona - "fire and forget".
+     * Publica evento de usuário registrado no RabbitMQ.
+     * Se der erro, não deixa o cadastro falhar (fire and forget).
      */
     private void publishUserRegisteredEvent(User user) {
         try {
@@ -150,7 +147,7 @@ public class UserService {
                     user.getId());
 
         } catch (Exception e) {
-            // Se o RabbitMQ estiver offline, não deixamos o cadastro falhar
+            // Se RabbitMQ estiver offline, apenas loga erro mas não quebra o cadastro
             log.error("Falha ao publicar evento no RabbitMQ para usuário {}: {}",
                     user.getId(), e.getMessage());
         }
