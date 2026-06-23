@@ -23,7 +23,7 @@ func _on_login_button_pressed() -> void:
 	login_button.disabled = true
 	login_button.text = "Conectando..."
 
-	var result: Dictionary = await AuthManager.login(email, password)
+	var result: Dictionary = await get_tree().root.get_node("AuthManager").login(email, password)
 
 	_reset_login_button()
 
