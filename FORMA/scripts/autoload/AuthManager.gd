@@ -61,7 +61,7 @@ func login(email: String, password: String) -> Dictionary:
 func clear_token() -> void:
 	token = ""
 	if FileAccess.file_exists(TOKEN_FILE_PATH):
-		FileAccess.remove(TOKEN_FILE_PATH)
+		DirAccess.remove_absolute(TOKEN_FILE_PATH)
 
 func save_token(new_token: String) -> void:
 	token = new_token
