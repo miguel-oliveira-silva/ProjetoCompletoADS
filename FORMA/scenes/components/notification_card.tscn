@@ -39,16 +39,13 @@ theme_override_constants/margin_bottom = 14
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="IconLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="IconRect" type="TextureRect" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_fonts/font = SubResource("FontVariation_Bold")
-theme_override_font_sizes/font_size = 22
-text = "📬"
-horizontal_alignment = 1
-vertical_alignment = 1
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ContentVBox" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2

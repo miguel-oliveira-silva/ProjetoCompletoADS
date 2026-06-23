@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #######################################
-# Enhanced Bootstrap Script for Markovitz Azure Infrastructure
+# Enhanced Bootstrap Script for Forma Azure Infrastructure
 # This template provides retry logic, structured logging, and monitoring
 #######################################
 
 # Configuration
-LOG_FILE="/var/log/markovitz-bootstrap.log"
+LOG_FILE="/var/log/forma-bootstrap.log"
 
 #######################################
 # Logging Function
@@ -583,7 +583,7 @@ ENABLE_HEALTH_CHECKS="${enable_health_checks}"
 ENABLE_RESOURCE_MONITORING="${enable_resource_monitoring}"
 
 # Configuration
-REPO_DIR="/opt/markovitz/app"
+REPO_DIR="/opt/forma/app"
 ADMIN_USERNAME="${admin_username}"
 GIT_REPO_URL="${git_repo_url}"
 GIT_REPO_BRANCH="${git_repo_branch}"
@@ -602,7 +602,7 @@ BOOTSTRAP_START_TIME=$(date +%s)
 # Log separator at bootstrap start (graceful failure handling)
 {
   log "INFO" "SYSTEM" "========================================="
-  log "INFO" "SYSTEM" "Markovitz Bootstrap Started"
+  log "INFO" "SYSTEM" "Forma Bootstrap Started"
   log "INFO" "SYSTEM" "========================================="
 } 2>/dev/null || true
 

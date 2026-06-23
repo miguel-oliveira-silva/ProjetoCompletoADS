@@ -130,7 +130,7 @@ else
     mkdir -p "$SSH_KEY_DIR"
     
     # Gerar par de chaves
-    if ssh-keygen -t rsa -b 4096 -f "$SSH_PRIVATE_KEY" -N "" -C "markovitz-azure-key" >/dev/null 2>&1; then
+    if ssh-keygen -t rsa -b 4096 -f "$SSH_PRIVATE_KEY" -N "" -C "forma-azure-key" >/dev/null 2>&1; then
         success "Novo par de chaves SSH gerado em $SSH_PRIVATE_KEY"
         success "Chave pública em $SSH_KEY_PATH"
     else

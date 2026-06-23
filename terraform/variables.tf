@@ -16,7 +16,7 @@ variable "location" {
 variable "project_name" {
   description = "Prefixo usado para nomear todos os recursos (sem espaços, minúsculo)."
   type        = string
-  default     = "markovitz"
+  default     = "forma"
 }
 
 variable "environment" {
@@ -58,7 +58,7 @@ variable "git_repo_branch" {
 variable "db_user" {
   description = "Usuário do banco PostgreSQL usado pelos microsserviços."
   type        = string
-  default     = "markovitz"
+  default     = "forma"
 }
 
 variable "db_password" {
@@ -89,7 +89,7 @@ variable "tags" {
   description = "Tags aplicadas a todos os recursos."
   type        = map(string)
   default = {
-    projeto        = "markovitz-portfolio-optimizer"
+    projeto        = "forma-portfolio-optimizer"
     disciplina     = "devops"
     gerenciado_por = "terraform"
   }

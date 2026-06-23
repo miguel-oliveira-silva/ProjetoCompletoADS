@@ -33,10 +33,10 @@ terraform {
   # um Terraform "bootstrap" separado) e descomente o bloco abaixo:
   #
   # backend "azurerm" {
-  #   resource_group_name  = "rg-markovitz-tfstate"
-  #   storage_account_name = "stmarkovitztfstate"
+  #   resource_group_name  = "rg-forma-tfstate"
+  #   storage_account_name = "stformatfstate"
   #   container_name       = "tfstate"
-  #   key                  = "markovitz.tfstate"
+  #   key                  = "forma.tfstate"
   # }
 }
 

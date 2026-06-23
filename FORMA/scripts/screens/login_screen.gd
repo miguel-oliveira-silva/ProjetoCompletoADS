@@ -8,21 +8,27 @@ extends ScrollContainer
 @onready var error_label:  Label  = %ErrorLabel
 
 # ── Painel Login ───────────────────────────────────────────────────────────
-@onready var panel_login:    VBoxContainer = %PanelLogin
-@onready var email_edit:     LineEdit      = %EmailEdit
-@onready var password_edit:  LineEdit      = %PasswordEdit
-@onready var login_btn:      Button        = %LoginBtn
+@onready var panel_login:     VBoxContainer = %PanelLogin
+@onready var email_edit:      LineEdit      = %EmailEdit
+@onready var password_edit:   LineEdit      = %PasswordEdit
+@onready var password_toggle: Button        = %PasswordToggle
+@onready var login_btn:       Button        = %LoginBtn
 
 # ── Painel Cadastro ────────────────────────────────────────────────────────
-@onready var panel_register:    VBoxContainer = %PanelRegister
-@onready var name_edit:         LineEdit      = %NameEdit
-@onready var reg_email_edit:    LineEdit      = %RegEmailEdit
-@onready var reg_password_edit: LineEdit      = %RegPasswordEdit
-@onready var conservador_btn:   Button        = %ConservadorButton
-@onready var moderado_btn:      Button        = %ModeradoButton
-@onready var agressivo_btn:     Button        = %AgressivoButton
-@onready var risk_desc_label:   Label         = %RiskDescLabel
-@onready var register_btn:      Button        = %RegisterBtn
+@onready var panel_register:       VBoxContainer = %PanelRegister
+@onready var name_edit:            LineEdit      = %NameEdit
+@onready var reg_email_edit:       LineEdit      = %RegEmailEdit
+@onready var reg_password_edit:    LineEdit      = %RegPasswordEdit
+@onready var reg_password_toggle:  Button        = %RegPasswordToggle
+@onready var strength_bar_1:       Panel         = %StrengthBar1
+@onready var strength_bar_2:       Panel         = %StrengthBar2
+@onready var strength_bar_3:       Panel         = %StrengthBar3
+@onready var strength_label:       Label         = %StrengthLabel
+@onready var conservador_btn:      Button        = %ConservadorButton
+@onready var moderado_btn:         Button        = %ModeradoButton
+@onready var agressivo_btn:        Button        = %AgressivoButton
+@onready var risk_desc_label:      Label         = %RiskDescLabel
+@onready var register_btn:         Button        = %RegisterBtn
 
 # ── Referência ao card para responsividade ─────────────────────────────────
 @onready var content_panel: PanelContainer = $CenterWrapper/ContentPanel
@@ -44,6 +50,12 @@ func _ready() -> void:
 	# Envio com Enter
 	password_edit.text_submitted.connect(func(_t): _on_login_pressed())
 	reg_password_edit.text_submitted.connect(func(_t): _on_register_pressed())
+
+	password_toggle.pressed.connect(func(): _toggle_password_visibility(password_edit, password_toggle))
+	reg_password_toggle.pressed.connect(func(): _toggle_password_visibility(reg_password_edit, reg_password_toggle))
+
+	reg_password_edit.text_changed.connect(_on_reg_password_changed)
+	_update_password_strength("")
 
 	conservador_btn.pressed.connect(func(): _select_risk("CONSERVADOR"))
 	moderado_btn.pressed.connect(func(): _select_risk("MODERADO"))
@@ -253,3 +265,76 @@ func _style_risk_button(btn: Button, active: bool, color: Color) -> void:
 		btn.add_theme_color_override("font_color",         FormaTokens.N700)
 		btn.add_theme_color_override("font_hover_color",   FormaTokens.N900)
 		btn.add_theme_color_override("font_pressed_color", FormaTokens.N900)
+
+# ===========================================================================
+# LÓGICA DE SENHA (Mostrar/Ocultar e Força da Senha)
+# ===========================================================================
+func _toggle_password_visibility(edit: LineEdit, btn: Button) -> void:
+	edit.secret = not edit.secret
+	btn.text = "Ocultar" if not edit.secret else "Mostrar"
+
+func _on_reg_password_changed(new_text: String) -> void:
+	_update_password_strength(new_text)
+
+func _update_password_strength(pw: String) -> void:
+	if pw.is_empty():
+		strength_bar_1.self_modulate = FormaTokens.N200
+		strength_bar_2.self_modulate = FormaTokens.N200
+		strength_bar_3.self_modulate = FormaTokens.N200
+		strength_label.text = ""
+		return
+		
+	if pw.length() < 6:
+		strength_bar_1.self_modulate = FormaTokens.RED
+		strength_bar_2.self_modulate = FormaTokens.N200
+		strength_bar_3.self_modulate = FormaTokens.N200
+		strength_label.text = "Senha muito curta (mínimo 6 caracteres)"
+		strength_label.add_theme_color_override("font_color", FormaTokens.RED)
+		return
+		
+	# Cálculo de pontos (máx 4)
+	var score: int = 1 # Já possui comprimento >= 6
+	
+	var has_upper := false
+	var has_lower := false
+	var has_digit := false
+	var has_special := false
+	var specials := "!@#$%^&*()_+-=[]{}|;':\",./<>?\\"
+	
+	for i in range(pw.length()):
+		var c := pw.unicode_at(i)
+		if c >= 65 and c <= 90:
+			has_upper = true
+		elif c >= 97 and c <= 122:
+			has_lower = true
+		elif c >= 48 and c <= 57:
+			has_digit = true
+		elif specials.contains(pw[i]):
+			has_special = true
+			
+	if has_upper and has_lower:
+		score += 1
+	if has_digit:
+		score += 1
+	if has_special:
+		score += 1
+		
+	match score:
+		1, 2:
+			strength_bar_1.self_modulate = FormaTokens.RED
+			strength_bar_2.self_modulate = FormaTokens.N200
+			strength_bar_3.self_modulate = FormaTokens.N200
+			strength_label.text = "Senha fraca (misture letras maiúsculas/números/símbolos)"
+			strength_label.add_theme_color_override("font_color", FormaTokens.RED)
+		3:
+			strength_bar_1.self_modulate = FormaTokens.AMBER
+			strength_bar_2.self_modulate = FormaTokens.AMBER
+			strength_bar_3.self_modulate = FormaTokens.N200
+			strength_label.text = "Senha média (adicione símbolos para torná-la forte)"
+			strength_label.add_theme_color_override("font_color", FormaTokens.AMBER)
+		4:
+			strength_bar_1.self_modulate = FormaTokens.GREEN
+			strength_bar_2.self_modulate = FormaTokens.GREEN
+			strength_bar_3.self_modulate = FormaTokens.GREEN
+			strength_label.text = "Senha forte! Excelente padrão."
+			strength_label.add_theme_color_override("font_color", FormaTokens.GREEN)

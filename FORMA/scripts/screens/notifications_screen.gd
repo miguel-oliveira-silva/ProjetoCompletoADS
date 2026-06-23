@@ -6,6 +6,7 @@ extends VBoxContainer
 @onready var main_scroll:      ScrollContainer = %MainScroll
 @onready var notifications_list: VBoxContainer = %NotificationsList
 @onready var empty_state_container: VBoxContainer = %EmptyStateContainer
+@onready var empty_icon:        TextureRect     = %EmptyIcon
 @onready var loading_label:    Label           = %LoadingLabel
 
 const NOTIFICATION_CARD_SCENE := preload("res://scenes/components/notification_card.tscn")
@@ -20,6 +21,9 @@ func _ready() -> void:
 	
 	get_tree().root.size_changed.connect(_update_responsive_layout)
 	back_button.pressed.connect(_go_back)
+	
+	# Modula o ícone do estado vazio de acordo com o Design System (tom cinza)
+	empty_icon.self_modulate = FormaTokens.N200
 	
 	_load_notifications()
 	
@@ -52,7 +56,7 @@ func _load_notifications() -> void:
 	_notifications = result.data if result.data is Array else []
 	
 	if _notifications.is_empty():
-		_show_empty_state("📭 Nenhuma notificação ainda.\n\nQuando você criar e otimizar carteiras,\nas notificações aparecerão aqui!")
+		_show_empty_state("Nenhuma notificação ainda.\n\nQuando você criar e otimizar carteiras,\nas notificações aparecerão aqui!")
 		return
 	
 	_populate_notifications()

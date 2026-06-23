@@ -1,11 +1,15 @@
 extends PanelContainer
 class_name NotificationCard
 
-@onready var icon_label:    Label = %IconLabel
+@onready var icon_rect:      TextureRect = %IconRect
 @onready var title_label:   Label = %TitleLabel
 @onready var message_label: Label = %MessageLabel
 @onready var date_label:    Label = %DateLabel
 @onready var type_badge:    Label = %TypeBadge
+
+const ICON_WELCOME = preload("res://assets/icons/welcome.svg")
+const ICON_CHECK = preload("res://assets/icons/check_notif.svg")
+const ICON_BELL = preload("res://assets/icons/bell_notif.svg")
 
 func setup(notification: Dictionary) -> void:
 	var notification_type: String = str(notification.get("type", ""))
@@ -17,17 +21,19 @@ func setup(notification: Dictionary) -> void:
 	var badge_color: Color
 	match notification_type:
 		"BOAS_VINDAS":
-			icon_label.text = "🎉"
+			icon_rect.texture = ICON_WELCOME
 			type_badge.text = "Boas-vindas"
 			badge_color = FormaTokens.BLUE
 		"CARTEIRA_OTIMIZADA":
-			icon_label.text = "✅"
+			icon_rect.texture = ICON_CHECK
 			type_badge.text = "Carteira"
 			badge_color = FormaTokens.GREEN
 		_:
-			icon_label.text = "📬"
+			icon_rect.texture = ICON_BELL
 			type_badge.text = "Notificação"
 			badge_color = FormaTokens.N500
+	
+	icon_rect.self_modulate = badge_color
 	
 	var badge_style := StyleBoxFlat.new()
 	badge_style.bg_color = badge_color

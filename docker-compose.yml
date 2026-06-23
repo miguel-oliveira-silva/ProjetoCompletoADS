@@ -1,7 +1,7 @@
 version: '3.8'
 
 # =============================================================================
-# DOCKER COMPOSE — Sistema Markovitz (Produção / Azure VM)
+# DOCKER COMPOSE — Sistema Forma (Produção / Azure VM)
 # =============================================================================
 #
 # Orquestra toda a stack:
@@ -10,7 +10,7 @@ version: '3.8'
 #   - 4 microsserviços Spring Boot, cada um buildado a partir do seu Dockerfile
 #
 # REDE:
-#   Todos os containers compartilham a rede "markovitz-net". Dentro dela,
+#   Todos os containers compartilham a rede "forma-net". Dentro dela,
 #   os serviços se enxergam pelo NOME DO SERVIÇO (ex: "postgres", "rabbitmq",
 #   "asset-service") em vez de "localhost" — por isso os application.yml usam
 #   variáveis de ambiente como DB_HOST=postgres.
@@ -34,11 +34,11 @@ services:
   # ===========================================================================
   postgres:
     image: postgres:16-alpine
-    container_name: markovitz-postgres
+    container_name: forma-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-markovitz}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-markovitz}
+      POSTGRES_USER: ${DB_USER:-forma}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-forma}
       # Banco "default" criado pela imagem; os outros 3 são criados pelo
       # script init-multi-db.sh montado abaixo.
       POSTGRES_DB: userdb
@@ -50,19 +50,19 @@ services:
       # automaticamente na primeira subida do container.
       - ./init-multi-db.sh:/docker-entrypoint-initdb.d/init-multi-db.sh:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-markovitz}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-forma}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - markovitz-net
+      - forma-net
 
   # ===========================================================================
   # RABBITMQ — Broker de mensagens assíncronas
   # ===========================================================================
   rabbitmq:
     image: rabbitmq:3.12-management
-    container_name: markovitz-rabbitmq
+    container_name: forma-rabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
@@ -78,7 +78,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - markovitz-net
+      - forma-net
 
   # ===========================================================================
   # USER-SERVICE — porta 8081
@@ -87,14 +87,14 @@ services:
     build:
       context: ./user-service
       dockerfile: Dockerfile
-    container_name: markovitz-user-service
+    container_name: forma-user-service
     restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: userdb
-      DB_USER: ${DB_USER:-markovitz}
-      DB_PASSWORD: ${DB_PASSWORD:-markovitz}
+      DB_USER: ${DB_USER:-forma}
+      DB_PASSWORD: ${DB_PASSWORD:-forma}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
@@ -107,7 +107,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - markovitz-net
+      - forma-net
 
   # ===========================================================================
   # ASSET-SERVICE — porta 8082
@@ -116,14 +116,14 @@ services:
     build:
       context: ./asset-service
       dockerfile: Dockerfile
-    container_name: markovitz-asset-service
+    container_name: forma-asset-service
     restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: assetdb
-      DB_USER: ${DB_USER:-markovitz}
-      DB_PASSWORD: ${DB_PASSWORD:-markovitz}
+      DB_USER: ${DB_USER:-forma}
+      DB_PASSWORD: ${DB_PASSWORD:-forma}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
@@ -136,7 +136,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - markovitz-net
+      - forma-net
 
   # ===========================================================================
   # PORTFOLIO-SERVICE — porta 8083 (chama asset-service via REST)
@@ -145,14 +145,14 @@ services:
     build:
       context: ./portfolio-service
       dockerfile: Dockerfile
-    container_name: markovitz-portfolio-service
+    container_name: forma-portfolio-service
     restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: portfoliodb
-      DB_USER: ${DB_USER:-markovitz}
-      DB_PASSWORD: ${DB_PASSWORD:-markovitz}
+      DB_USER: ${DB_USER:-forma}
+      DB_PASSWORD: ${DB_PASSWORD:-forma}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
@@ -170,7 +170,7 @@ services:
       asset-service:
         condition: service_started
     networks:
-      - markovitz-net
+      - forma-net
 
   # ===========================================================================
   # NOTIFICATION-SERVICE — porta 8084
@@ -179,14 +179,14 @@ services:
     build:
       context: ./notification-service
       dockerfile: Dockerfile
-    container_name: markovitz-notification-service
+    container_name: forma-notification-service
     restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: notificationdb
-      DB_USER: ${DB_USER:-markovitz}
-      DB_PASSWORD: ${DB_PASSWORD:-markovitz}
+      DB_USER: ${DB_USER:-forma}
+      DB_PASSWORD: ${DB_PASSWORD:-forma}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
@@ -199,10 +199,10 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - markovitz-net
+      - forma-net
 
 networks:
-  markovitz-net:
+  forma-net:
     driver: bridge
 
 volumes:

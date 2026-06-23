@@ -44,5 +44,5 @@ output "rabbitmq_management_url" {
 
 output "bootstrap_log_hint" {
   description = "Como acompanhar o provisionamento automático da aplicação."
-  value       = "Após o SSH, rode: sudo tail -f /var/log/markovitz-bootstrap.log"
+  value       = "Após o SSH, rode: sudo tail -f /var/log/forma-bootstrap.log"
 }

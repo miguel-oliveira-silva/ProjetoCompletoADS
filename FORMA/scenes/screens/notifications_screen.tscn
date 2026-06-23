@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dq5j7h8lalmno"]
+[gd_scene load_steps=7 format=3 uid="uid://dq5j7h8lalmno"]
 
 [ext_resource type="Script" path="res://scripts/screens/notifications_screen.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://cma3erfdpxxnj" path="res://assets/fonts/SpaceGrotesk-Bold.ttf" id="2"]
 [ext_resource type="Texture2D" uid="uid://omgw44yrr3yo" path="res://assets/icons/arrow_left.svg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/icons/bell_notif.svg" id="4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 bg_color = Color(0.973, 0.965, 0.945, 1)
@@ -110,11 +111,21 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 12
 alignment = 1
+
+[node name="EmptyIcon" type="TextureRect" parent="SafeAreaMargin/ContentVBox/EmptyStateContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="EmptyLabel" type="Label" parent="SafeAreaMargin/ContentVBox/EmptyStateContainer"]
 layout_mode = 2
-text = "📭 Nenhuma notificação ainda.
+text = "Nenhuma notificação ainda.
 
 Quando você criar e otimizar carteiras,
 as notificações aparecerão aqui!"

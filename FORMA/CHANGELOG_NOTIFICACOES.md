@@ -214,8 +214,8 @@ curl http://localhost:8084/api/notifications/user/1
 
 - **Data de Implementação**: 22/06/2026
 - **Versão do Godot**: 4.6
-- **Backend API**: Markovitz v1.0
-- **Autor**: Equipe Markovitz
+- **Backend API**: Forma v1.0
+- **Autor**: Equipe Forma
 - **Propósito**: Completar requisito de 3 domínios no app móvel
 
 ---

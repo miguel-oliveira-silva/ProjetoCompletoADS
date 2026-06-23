@@ -41,8 +41,8 @@ info() {
 # =============================================================================
 VM_IP="${vm_ip}"
 ADMIN_USERNAME="${admin_username}"
-APP_DIR="/opt/markovitz/app"
-LOG_FILE="/var/log/markovitz-bootstrap.log"
+APP_DIR="/opt/forma/app"
+LOG_FILE="/var/log/forma-bootstrap.log"
 
 # =============================================================================
 # Função: Executar Comando Remoto via SSH

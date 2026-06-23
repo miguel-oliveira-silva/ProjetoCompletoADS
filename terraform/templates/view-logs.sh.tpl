@@ -33,7 +33,7 @@ set -e  # Falhar em caso de erro não tratado
 # =============================================================================
 VM_IP="${vm_ip}"
 VM_USER="${vm_user}"
-CONTAINER_PREFIX="markovitz"
+CONTAINER_PREFIX="forma"
 DEFAULT_LINES=50
 
 # Serviços válidos
@@ -115,7 +115,7 @@ fi
 # =============================================================================
 # Nome do Container
 # =============================================================================
-# Formato do nome do container: markovitz-<service-name>
+# Formato do nome do container: forma-<service-name>
 CONTAINER_NAME="$${CONTAINER_PREFIX}-$${SERVICE_NAME}"
 
 # =============================================================================
@@ -136,7 +136,7 @@ if ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$${VM_USER}@$${VM_IP}" 
     
     # Registrar operação no bootstrap log
     ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$${VM_USER}@$${VM_IP}" \
-        "echo \"[\$(date -u +\"%Y-%m-%dT%H:%M:%S+00:00\")] [INFO] [MAINTENANCE] Viewed logs: $${SERVICE_NAME} (last $${LINES} lines)\" >> /var/log/markovitz-bootstrap.log" 2>/dev/null || true
+        "echo \"[\$(date -u +\"%Y-%m-%dT%H:%M:%S+00:00\")] [INFO] [MAINTENANCE] Viewed logs: $${SERVICE_NAME} (last $${LINES} lines)\" >> /var/log/forma-bootstrap.log" 2>/dev/null || true
     
     echo ""
     echo "========================================"
@@ -161,7 +161,7 @@ else
     echo "  ssh $${VM_USER}@$${VM_IP} 'docker ps -a | grep $${CONTAINER_NAME}'"
     echo ""
     echo "  # Verificar logs do bootstrap"
-    echo "  ssh $${VM_USER}@$${VM_IP} 'tail -100 /var/log/markovitz-bootstrap.log'"
+    echo "  ssh $${VM_USER}@$${VM_IP} 'tail -100 /var/log/forma-bootstrap.log'"
     echo ""
     exit 1
 fi

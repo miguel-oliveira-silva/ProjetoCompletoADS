@@ -17,7 +17,7 @@ write_files:
   
   
   
-  - path: /opt/markovitz/bootstrap.sh
+  - path: /opt/forma/bootstrap.sh
     permissions: '0755'
     content: |
       __BOOTSTRAP_SCRIPT__
@@ -26,17 +26,17 @@ write_files:
   
   
   
-  - path: /etc/systemd/system/markovitz-bootstrap.service
+  - path: /etc/systemd/system/forma-bootstrap.service
     permissions: '0644'
     content: |
       [Unit]
-      Description=Markovitz - Bootstrap da aplicacao (clone + docker compose up)
+      Description=Forma - Bootstrap da aplicacao (clone + docker compose up)
       After=network-online.target docker.service
       Wants=network-online.target
 
       [Service]
       Type=oneshot
-      ExecStart=/opt/markovitz/bootstrap.sh
+      ExecStart=/opt/forma/bootstrap.sh
       RemainAfterExit=true
       TimeoutStartSec=900
 
@@ -44,9 +44,9 @@ write_files:
       WantedBy=multi-user.target
 
 runcmd:
-  - mkdir -p /opt/markovitz
+  - mkdir -p /opt/forma
   - systemctl daemon-reload
-  - systemctl enable markovitz-bootstrap.service
-  - systemctl start markovitz-bootstrap.service
+  - systemctl enable forma-bootstrap.service
+  - systemctl start forma-bootstrap.service
 
-final_message: "Markovitz: cloud-init finalizado em $UPTIME segundos. Veja /var/log/markovitz-bootstrap.log para detalhes do deploy da aplicação."
+final_message: "Forma: cloud-init finalizado em $UPTIME segundos. Veja /var/log/forma-bootstrap.log para detalhes do deploy da aplicação."

@@ -116,14 +116,14 @@ check_application_ports() {
                 check_pass "Application: $service port $port is accessible"
             else
                 check_fail "Application: $service port $port is not accessible" \
-                    "Service may still be starting. Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs markovitz-$service'"
+                    "Service may still be starting. Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs forma-$service'"
             fi
         elif command -v timeout > /dev/null 2>&1; then
             if timeout 5 bash -c "cat < /dev/null > /dev/tcp/$VM_IP/$port" 2>/dev/null; then
                 check_pass "Application: $service port $port is accessible"
             else
                 check_fail "Application: $service port $port is not accessible" \
-                    "Service may still be starting. Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs markovitz-$service'"
+                    "Service may still be starting. Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs forma-$service'"
             fi
         else
             check_fail "Application: Cannot test $service port $port (nc/timeout not available)" \
@@ -137,14 +137,14 @@ check_application_ports() {
             check_pass "Application: RabbitMQ Management UI port 15672 is accessible"
         else
             check_fail "Application: RabbitMQ Management UI port 15672 is not accessible" \
-                "Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs markovitz-rabbitmq'"
+                "Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs forma-rabbitmq'"
         fi
     elif command -v timeout > /dev/null 2>&1; then
         if timeout 5 bash -c "cat < /dev/null > /dev/tcp/$VM_IP/15672" 2>/dev/null; then
             check_pass "Application: RabbitMQ Management UI port 15672 is accessible"
         else
             check_fail "Application: RabbitMQ Management UI port 15672 is not accessible" \
-                "Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs markovitz-rabbitmq'"
+                "Check logs: ssh $ADMIN_USERNAME@$VM_IP 'docker logs forma-rabbitmq'"
         fi
     else
         check_fail "Application: Cannot test RabbitMQ port 15672 (nc/timeout not available)" \
@@ -172,7 +172,7 @@ check_health_endpoints() {
                 check_pass "Health: $service is UP"
             else
                 check_fail "Health: $service is not UP or unreachable" \
-                    "Check bootstrap log: ssh $ADMIN_USERNAME@$VM_IP 'tail -100 /var/log/markovitz-bootstrap.log'"
+                    "Check bootstrap log: ssh $ADMIN_USERNAME@$VM_IP 'tail -100 /var/log/forma-bootstrap.log'"
             fi
         else
             check_fail "Health: Cannot test $service (curl not available)" \
@@ -225,7 +225,7 @@ check_rabbitmq_management() {
             check_pass "RabbitMQ Management UI: Accessible at http://$VM_IP:15672"
         else
             check_fail "RabbitMQ Management UI: Returned HTTP $status_code" \
-                "Check RabbitMQ container: ssh $ADMIN_USERNAME@$VM_IP 'docker logs markovitz-rabbitmq'"
+                "Check RabbitMQ container: ssh $ADMIN_USERNAME@$VM_IP 'docker logs forma-rabbitmq'"
         fi
     else
         check_fail "RabbitMQ Management UI: Cannot test (curl not available)" \
@@ -267,7 +267,7 @@ main() {
         echo -e "$${RED}[FAILURE]$${NC} Deploy verification failed"
         echo ""
         echo "Diagnostic commands:"
-        echo "  - View bootstrap log: ssh $ADMIN_USERNAME@$VM_IP 'tail -100 /var/log/markovitz-bootstrap.log'"
+        echo "  - View bootstrap log: ssh $ADMIN_USERNAME@$VM_IP 'tail -100 /var/log/forma-bootstrap.log'"
         echo "  - Check containers: ssh $ADMIN_USERNAME@$VM_IP 'docker ps -a'"
         echo "  - Check resources: ssh $ADMIN_USERNAME@$VM_IP 'free -h && df -h'"
         echo ""

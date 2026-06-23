@@ -64,6 +64,46 @@ content_margin_top = 0.0
 content_margin_right = 14.0
 content_margin_bottom = 0.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pw_normal"]
+bg_color = Color(0.972549, 0.9647059, 0.94509804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8352941, 0.83137256, 0.85490197, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 0.0
+content_margin_right = 64.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pw_focus"]
+bg_color = Color(0.972549, 0.9647059, 0.94509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.105882354, 0.24705882, 0.627451, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 0.0
+content_margin_right = 64.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_strength_segment"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 bg_color = Color(0.050980393, 0.050980393, 0.08235294, 1)
 corner_radius_top_left = 8
@@ -316,10 +356,32 @@ theme_override_fonts/font = SubResource("FontVariation_regular")
 theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
 theme_override_colors/font_placeholder_color = Color(0.5254902, 0.52156866, 0.5882353, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_le_normal")
-theme_override_styles/focus = SubResource("StyleBoxFlat_le_focus")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pw_normal")
+theme_override_styles/focus = SubResource("StyleBoxFlat_pw_focus")
 placeholder_text = "Minimo 6 caracteres"
 secret = true
+
+[node name="PasswordToggle" type="Button" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelLogin/PasswordEdit"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -14.0
+offset_right = -12.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.384, 0.38, 0.447, 1)
+theme_override_colors/font_hover_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_colors/font_pressed_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_fonts/font = SubResource("FontVariation_bold")
+theme_override_font_sizes/font_size = 11
+flat = true
+text = "Mostrar"
 
 [node name="LoginBtn" type="Button" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelLogin"]
 unique_name_in_owner = true
@@ -401,10 +463,70 @@ theme_override_fonts/font = SubResource("FontVariation_regular")
 theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
 theme_override_colors/font_placeholder_color = Color(0.5254902, 0.52156866, 0.5882353, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_le_normal")
-theme_override_styles/focus = SubResource("StyleBoxFlat_le_focus")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pw_normal")
+theme_override_styles/focus = SubResource("StyleBoxFlat_pw_focus")
 placeholder_text = "Minimo 6 caracteres"
 secret = true
+
+[node name="RegPasswordToggle" type="Button" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/RegPasswordEdit"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -14.0
+offset_right = -12.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.384, 0.38, 0.447, 1)
+theme_override_colors/font_hover_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_colors/font_pressed_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_fonts/font = SubResource("FontVariation_bold")
+theme_override_font_sizes/font_size = 11
+flat = true
+text = "Mostrar"
+
+[node name="PasswordStrengthContainer" type="VBoxContainer" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BarHBox" type="HBoxContainer" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/PasswordStrengthContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StrengthBar1" type="Panel" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/PasswordStrengthContainer/BarHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_strength_segment")
+
+[node name="StrengthBar2" type="Panel" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/PasswordStrengthContainer/BarHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_strength_segment")
+
+[node name="StrengthBar3" type="Panel" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/PasswordStrengthContainer/BarHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_strength_segment")
+
+[node name="StrengthLabel" type="Label" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister/PasswordStrengthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_regular")
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
+text = ""
 
 [node name="RiskLabel" type="Label" parent="CenterWrapper/ContentPanel/Margin/VBox/PanelRegister"]
 layout_mode = 2
