@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://duw2hju7ns71t"]
+
+[ext_resource type="Script" uid="uid://xfuyr1ccd4a5" path="res://scripts/components/portfolio_card.gd" id="1"]
+[ext_resource type="FontFile" uid="uid://cma3erfdpxxnj" path="res://assets/fonts/SpaceGrotesk-Bold.ttf" id="2"]
+[ext_resource type="FontFile" uid="uid://bbhmar6e4jb37" path="res://assets/fonts/SpaceMono-Regular.ttf" id="3"]
+[ext_resource type="FontFile" uid="uid://bjd5qot7yh5wo" path="res://assets/fonts/SpaceMono-Bold.ttf" id="4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 1)
+shadow_color = Color(0.051, 0.051, 0.082, 0.07)
+shadow_size = 6
+
+[sub_resource type="FontVariation" id="FontVariation_1"]
+base_font = ExtResource("2")
+
+[sub_resource type="FontVariation" id="FontVariation_2"]
+base_font = ExtResource("3")
+
+[sub_resource type="FontVariation" id="FontVariation_3"]
+base_font = ExtResource("4")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2"]
+content_margin_left = 12.0
+content_margin_top = 0.0
+content_margin_right = 12.0
+content_margin_bottom = 0.0
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.835, 0.831, 0.855, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3"]
+content_margin_left = 12.0
+content_margin_top = 0.0
+content_margin_right = 12.0
+content_margin_bottom = 0.0
+bg_color = Color(0.925, 0.918, 0.902, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="PortfolioCard" type="PanelContainer" unique_id=368250106]
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+script = ExtResource("1")
+
+[node name="ContentMargin" type="MarginContainer" parent="." unique_id=1453527221]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="ContentVBox" type="VBoxContainer" parent="ContentMargin" unique_id=1430069179]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="ContentMargin/ContentVBox" unique_id=1305228834]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderInfo" type="VBoxContainer" parent="ContentMargin/ContentVBox/HeaderRow" unique_id=1786968383]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 3
+
+[node name="PortfolioNameLabel" type="Label" parent="ContentMargin/ContentVBox/HeaderRow/HeaderInfo" unique_id=1851146412]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_fonts/font = SubResource("FontVariation_1")
+theme_override_font_sizes/font_size = 15
+text = "Nome da Carteira"
+clip_text = true
+
+[node name="DateLabel" type="Label" parent="ContentMargin/ContentVBox/HeaderRow/HeaderInfo" unique_id=1132210568]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 11
+text = "—"
+
+[node name="StatusChip" type="PanelContainer" parent="ContentMargin/ContentVBox/HeaderRow" unique_id=2071445172]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="StatusLabel" type="Label" parent="ContentMargin/ContentVBox/HeaderRow/StatusChip" unique_id=180051000]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.973, 0.965, 0.945, 1)
+theme_override_fonts/font = SubResource("FontVariation_1")
+theme_override_font_sizes/font_size = 9
+text = "PENDENTE"
+
+[node name="MetricsRow" type="HBoxContainer" parent="ContentMargin/ContentVBox" unique_id=720768719]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ReturnCol" type="VBoxContainer" parent="ContentMargin/ContentVBox/MetricsRow" unique_id=1534662896]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ReturnHeader" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/ReturnCol" unique_id=1301864185]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 9
+text = "RETORNO"
+
+[node name="ReturnLabel" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/ReturnCol" unique_id=1197274195]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.102, 0.42, 0.259, 1)
+theme_override_fonts/font = SubResource("FontVariation_3")
+theme_override_font_sizes/font_size = 17
+text = "0.0%"
+
+[node name="RiskCol" type="VBoxContainer" parent="ContentMargin/ContentVBox/MetricsRow" unique_id=375972493]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="RiskHeader" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/RiskCol" unique_id=1974475198]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 9
+text = "RISCO"
+
+[node name="RiskLabel" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/RiskCol" unique_id=1510963886]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.851, 0.482, 0.125, 1)
+theme_override_fonts/font = SubResource("FontVariation_3")
+theme_override_font_sizes/font_size = 17
+text = "0.0%"
+
+[node name="SharpeCol" type="VBoxContainer" parent="ContentMargin/ContentVBox/MetricsRow" unique_id=983435905]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="SharpeHeader" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/SharpeCol" unique_id=1569664211]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.525, 0.522, 0.588, 1)
+theme_override_fonts/font = SubResource("FontVariation_2")
+theme_override_font_sizes/font_size = 9
+text = "SHARPE"
+
+[node name="SharpeLabel" type="Label" parent="ContentMargin/ContentVBox/MetricsRow/SharpeCol" unique_id=1434210241]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.106, 0.247, 0.627, 1)
+theme_override_fonts/font = SubResource("FontVariation_3")
+theme_override_font_sizes/font_size = 17
+text = "0.000"
+
+[node name="ViewButton" type="Button" parent="ContentMargin/ContentVBox" unique_id=2144725126]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_colors/font_hover_color = Color(0.051, 0.051, 0.082, 1)
+theme_override_fonts/font = SubResource("FontVariation_1")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_2")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3")
+theme_override_styles/focus = SubResource("StyleBoxFlat_2")
+text = "Ver detalhes"

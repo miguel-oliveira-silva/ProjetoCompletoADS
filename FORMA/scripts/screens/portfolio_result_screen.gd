@@ -105,9 +105,13 @@ func _add_metric(p_label: String, p_value: String, p_sub: String, color: Color) 
 
 # Navegação
 
+func _navigate_to(path: String) -> void:
+	if is_inside_tree():
+		get_tree().change_scene_to_file(path)
+
 func _go_to_selection() -> void:
 	SelectionManager.clear()
-	get_tree().change_scene_to_file("res://scenes/screens/wallet_selection_screen.tscn")
+	_navigate_to("res://scenes/screens/wallet_selection_screen.tscn")
 
 # Responsividade
 

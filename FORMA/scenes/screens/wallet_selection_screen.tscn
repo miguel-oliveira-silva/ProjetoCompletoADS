@@ -5,8 +5,8 @@
 [ext_resource type="FontFile" uid="uid://ccc8h6etvs3y2" path="res://assets/fonts/SpaceGrotesk-Regular.ttf" id="3"]
 [ext_resource type="FontFile" uid="uid://bbhmar6e4jb37" path="res://assets/fonts/SpaceMono-Regular.ttf" id="4"]
 [ext_resource type="Texture2D" uid="uid://omgw44yrr3yo" path="res://assets/icons/arrow_left.svg" id="5"]
-[ext_resource type="Texture2D" uid="uid://qniledqr3v1b" path="res://assets/icons/more_horiz.svg" id="6"]
-[ext_resource type="Texture2D" path="res://assets/icons/notifications.svg" id="7"]
+[ext_resource type="Texture2D" uid="uid://bcbkjuhb2ti7l" path="res://assets/icons/notifications.svg" id="7"]
+[ext_resource type="Texture2D" uid="uid://igmyn3mi6ias" path="res://assets/icons/person.svg" id="8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 bg_color = Color(0.973, 0.965, 0.945, 1)
@@ -158,8 +158,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-
-
 [node name="WalletSelectionScreen" type="VBoxContainer" unique_id=86905245]
 anchors_preset = 15
 anchor_right = 1.0
@@ -194,18 +192,42 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("5")
 stretch_mode = 3
 
-[node name="AppBarTitleLabel" type="Label" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=1680217829]
+[node name="ProfileButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=20688377]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+flat = true
+
+[node name="ProfileHBox" type="HBoxContainer" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton" unique_id=1540810858]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="ProfileIcon" type="TextureRect" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton/ProfileHBox" unique_id=1544026846]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("8")
+stretch_mode = 3
+
+[node name="ProfileNameLabel" type="Label" parent="TopAppBar/TopBarMargin/AppBarHBox/ProfileButton/ProfileHBox" unique_id=1597664172]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_colors/font_color = Color(0.051, 0.051, 0.082, 1)
 theme_override_fonts/font = SubResource("FontVariation_1")
-theme_override_font_sizes/font_size = 15
-text = "Montar Carteira"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+text = "Perfil"
 
 [node name="MoreButton" type="Button" parent="TopAppBar/TopBarMargin/AppBarHBox" unique_id=571527133]
 unique_name_in_owner = true
@@ -214,7 +236,7 @@ layout_mode = 2
 size_flags_vertical = 4
 flat = true
 
-[node name="MoreIcon" type="TextureRect" parent="TopAppBar/TopBarMargin/AppBarHBox/MoreButton" unique_id=2123198976]
+[node name="MoreIcon" type="TextureRect" parent="TopAppBar/TopBarMargin/AppBarHBox/MoreButton" unique_id=113791211]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -222,7 +244,6 @@ anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource("7")
 stretch_mode = 3
-
 
 [node name="MainScrollContainer" type="ScrollContainer" parent="." unique_id=111111111]
 unique_name_in_owner = true
@@ -334,8 +355,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 24
 
-
-
 [node name="BottomSelectionBar" type="PanelContainer" parent="." unique_id=369171784]
 unique_name_in_owner = true
 visible = false
@@ -427,4 +446,3 @@ theme_override_styles/disabled = SubResource("StyleBoxFlat_9")
 theme_override_styles/focus = SubResource("StyleBoxFlat_7")
 disabled = true
 text = "Continuar"
-
