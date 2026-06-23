@@ -13,34 +13,24 @@ func _ready() -> void:
 	login_button.pressed.connect(_on_login_button_pressed)
 
 func _on_login_button_pressed() -> void:
-	# Limpar mensagens de erro anteriores
 	clear_error()
-
-	# Obter valores dos campos de entrada
 	var email: String = email_line_edit.text.strip_edges()
 	var password: String = password_line_edit.text
 
-	# Validar entrada ANTES de desativar o botão
 	if not _validate_inputs(email, password):
 		return
 
-	# Desativar interação e mostrar feedback visual de carregamento
 	login_button.disabled = true
 	login_button.text = "Conectando..."
 
-	# Aguardar resposta do servidor
 	var result: Dictionary = await AuthManager.login(email, password)
 
-	# Reativar o botão independentemente do resultado
 	_reset_login_button()
 
-	# Processar resultado do login
 	if result.ok:
-		# Login bem-sucedido: mudar de cena
 		get_tree().change_scene_to_file("res://scenes/screens/wallet_selection_screen.tscn")
 		return
 
-	# Login falhou: tratar diferentes códigos de erro
 	match result.code:
 		400:
 			_show_error("E-mail ou senha inválidos. Verifique e tente novamente.")
@@ -73,3 +63,4 @@ func clear_error() -> void:
 func _reset_login_button() -> void:
 	login_button.disabled = false
 	login_button.text = "Entrar"
+
