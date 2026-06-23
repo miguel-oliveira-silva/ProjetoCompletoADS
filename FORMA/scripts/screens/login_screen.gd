@@ -63,4 +63,3 @@ func clear_error() -> void:
 func _reset_login_button() -> void:
 	login_button.disabled = false
 	login_button.text = "Entrar"
-
